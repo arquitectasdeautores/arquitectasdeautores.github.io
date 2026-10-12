@@ -1286,13 +1286,29 @@ body::before {
   .footer { padding: 20px 16px; }
   .footer p { font-size: 12px !important; }
 }
+
+/* Orden: hero · video · formulario · tarjetas · CTA final · footer */
+.closing-cta { padding-top: 48px; padding-bottom: 52px; }
+.closing-cta .cta-block { margin-top: 0; }
+@media (max-width: 600px) {
+  .closing-cta { padding-top: 36px !important; padding-bottom: 40px !important; }
+}
+
+/* Eyebrow del hero +2px */
+.hero .eyebrow { font-size: 13px !important; }
+@media (max-width: 600px) { .hero .eyebrow { font-size: 11px !important; } }
+@media (max-width: 480px) {
+  .hero .eyebrow { font-size: 10.5px !important; letter-spacing: .06em !important; white-space: nowrap; gap: 8px !important; }
+  .hero .eyebrow::before, .hero .eyebrow::after { width: 12px !important; }
+}
+@media (max-width: 360px) { .hero .eyebrow { font-size: 9.5px !important; } }
 </style>
 
 <div class="page">
 
   <!-- TOP BAR urgencia -->
   <div class="topbar">
-    <p>Cupos limitados<span class="topbar-extra"> · <strong>Mira el video completo antes de que se cierre</strong></span></p>
+    <p>Cupos limitados</p>
   </div>
 
   <!-- HEADER -->
@@ -1345,52 +1361,8 @@ body::before {
       </div><!-- /.video-container -->
       </div><!-- /.video-outer -->
 
-      <div class="video-meta">
-        <span>Mira el video completo · El botón aparece al final</span>
-      </div>
-
-      <!-- CTA bajo video -->
-      <div class="cta-block">
-        <p class="cta-lead">Tu historia puede ayudar a alguien.<br>Nosotras te ayudamos a convertirla en un libro.</p>
-        <p class="cta-sub">Reserva tu lugar en el programa · Cupos limitados</p>
-        <a href="#inscripcion" class="btn-primary">Quiero ser autor publicado</a>
-        <p class="guarantee">Método A.U.T.O.R. · No es magia. Es conocimiento.</p>
-      </div>
-
     </div>
   </section>
-
-  <div class="divider"></div>
-
-  <!-- WHAT THEY'LL DISCOVER -->
-  <section class="discover-section">
-    <div class="wrap">
-      <div class="section-eye">
-        <div class="eyebrow">Nunca antes ha sido tan fácil escribir un libro</div>
-      </div>
-
-      <div class="items-grid">
-        <div class="item-card">
-          <div class="item-ico">✦</div>
-          <p><strong>No necesitas una vida extraordinaria</strong>Tienes experiencia acumulada y el deseo de ayudar con tu historia. La clave es saber cómo estructurarla.</p>
-        </div>
-        <div class="item-card">
-          <div class="item-ico">✦</div>
-          <p><strong>No necesitas saber escribir</strong>No enseñamos escritura. Damos una metodología comprobada y te acompañamos a usarla.</p>
-        </div>
-        <div class="item-card">
-          <div class="item-ico">✦</div>
-          <p><strong>No necesitas mucho tiempo</strong>El programa es de tres semanas, con sesiones estructuradas. Disciplina, enfoque y la ruta correcta son suficientes.</p>
-        </div>
-        <div class="item-card">
-          <div class="item-ico">✦</div>
-          <p><strong>No es para todos</strong>Es solo para quienes realmente sueñan con escribir su libro.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
 
   <!-- SECOND CTA -->
   <section class="second-cta" id="inscripcion">
@@ -1433,6 +1405,51 @@ body::before {
     </div>
   </section>
 
+  <!-- WHAT THEY'LL DISCOVER -->
+  <section class="discover-section">
+    <div class="wrap">
+      <div class="section-eye">
+        <div class="eyebrow">Nunca antes ha sido tan fácil escribir un libro</div>
+      </div>
+
+      <div class="items-grid">
+        <div class="item-card">
+          <div class="item-ico">✦</div>
+          <p><strong>No necesitas una vida extraordinaria</strong>Tienes experiencia acumulada y el deseo de ayudar con tu historia. La clave es saber cómo estructurarla.</p>
+        </div>
+        <div class="item-card">
+          <div class="item-ico">✦</div>
+          <p><strong>No necesitas saber escribir</strong>No enseñamos escritura. Damos una metodología comprobada y te acompañamos a usarla.</p>
+        </div>
+        <div class="item-card">
+          <div class="item-ico">✦</div>
+          <p><strong>No necesitas mucho tiempo</strong>El programa es de un mes, con sesiones estructuradas. Disciplina, enfoque y la ruta correcta son suficientes.</p>
+        </div>
+        <div class="item-card">
+          <div class="item-ico">✦</div>
+          <p><strong>No es para todos</strong>Es solo para quienes realmente sueñan con escribir su libro.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CIERRE: CTA + MÉTODO -->
+  <section class="vsl-section closing-cta">
+    <div class="vsl-wrap">
+
+      <!-- CTA final -->
+      <div class="cta-block">
+        <p class="cta-lead">Tu historia puede ayudar a alguien. <br>Nosotras te ayudamos a convertirla en un libro.</p>
+        <p class="cta-sub">Infórmate sobre nuestro programa · Cupos limitados</p>
+        <a href="#inscripcion" class="btn-primary">Quiero escribir mi libro</a>
+        <p class="guarantee">Método A.U.T.O.R. · No es magia. Es conocimiento.</p>
+      </div>
+
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer class="footer">
     <p>© 2026 La Incubadora · Arquitectas de Autores Publicados · <a href="mailto:contacto@arquitectasdeautores.com">contacto@arquitectasdeautores.com</a> · <a href="https://wa.me/51943531879" target="_blank">WhatsApp +51 943 531 879</a></p>
@@ -1464,12 +1481,12 @@ body::before {
         } else {
           btn.disabled = false;
           btn.innerHTML = '✦ &nbsp;Quiero escribir mi libro&nbsp; ✦';
-          alert('Hubo un problema al enviar. Por favor intenta nuevamente.');
+          alert('Hubo un problema al enviar. Por favor, intenta nuevamente.');
         }
       } catch(err) {
         btn.disabled = false;
         btn.innerHTML = '✦ &nbsp;Quiero escribir mi libro&nbsp; ✦';
-        alert('Error de conexión. Por favor intenta nuevamente.');
+        alert('Error de conexión. Por favor, intenta nuevamente.');
       }
     });
   }
