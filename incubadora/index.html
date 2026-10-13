@@ -12,7 +12,23 @@
 .video-container .play-ring { background: rgba(8,15,28,.45); }
 .video-container.is-playing { cursor: default; }
 .video-container.is-playing .video-placeholder { display: none; }
-</style></head><body>
+</style><!-- Meta Pixel de Arquitectas de Autores: PageView + conversion Lead -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1593006482349010');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel -->
+</head><body>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1593006482349010&ev=PageView&noscript=1" alt=""></noscript>
 <title>La Incubadora — Autor Publicado</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap">
@@ -1474,6 +1490,11 @@ body::before {
         });
         const json = await res.json();
         if (json.success) {
+          // Registrar Lead solo después de que Web3Forms confirme el envío.
+          // No se envían al píxel el nombre, correo ni WhatsApp del contacto.
+          if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Lead');
+          }
           incubadoraForm.style.display = 'none';
           const beneath = document.getElementById('form-beneath');
           if (beneath) beneath.style.display = 'none';
