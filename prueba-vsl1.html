@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Prueba privada de registro VSL1 — Arquitectas de Autores</title>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    body{font:16px/1.5 system-ui,-apple-system,sans-serif;background:#f5f2ef;color:#212121;margin:0;padding:40px 16px}
+    main{max-width:490px;background:#fff;border-radius:16px;padding:32px;margin:auto;box-shadow:0 12px 40px #0001}
+    h1{font-size:25px;margin:0 0 8px}p{margin:0 0 20px}
+    label{display:block;font-weight:600;margin:18px 0 6px}
+    input{box-sizing:border-box;width:100%;border:1px solid #bbb;border-radius:8px;padding:12px;font:inherit}
+    .cf-turnstile{margin:24px 0}
+    button{background:#6b37bd;color:#fff;border:0;border-radius:8px;padding:14px 22px;font:inherit;font-weight:bold;cursor:pointer}
+    button:disabled{opacity:.5;cursor:wait}
+    #estado{margin-top:18px;font-weight:600;white-space:pre-wrap}
+    small{color:#666}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Prueba técnica de inscripción</h1>
+    <p>Esta página sirve para comprobar la conexión segura entre el formulario, Cloudflare, Make, Google Sheets y el correo. No es el formulario público.</p>
+    <form id="prueba">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" autocomplete="name" required maxlength="120" placeholder="Prueba Consuelo">
+      <label for="email">Correo que recibirá el mensaje</label>
+      <input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+      <label for="whatsapp">WhatsApp</label>
+      <input id="whatsapp" name="whatsapp" type="tel" autocomplete="tel" required maxlength="30">
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAAFt2HctZq_F1Rz_k" data-action="registro_vsl1" data-theme="light"></div>
+      <button id="enviar" type="submit">Enviar inscripción de prueba</button>
+    </form>
+    <p id="estado" role="status" aria-live="polite"></p>
+    <small>Una prueba correcta genera una fila de prueba en Sheets y envía un correo al email indicado.</small>
+  </main>
+  <script>
+    const formulario = document.getElementById("prueba");
+    const boton = document.getElementById("enviar");
+    const estado = document.getElementById("estado");
+    formulario.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const datos = new FormData(formulario);
+      const token = String(datos.get("cf-turnstile-response") || "");
+      if (!token) {
+        estado.textContent = "Espera a que termine la verificación de seguridad.";
+        return;
+      }
+      boton.disabled = true;
+      estado.textContent = "Enviando prueba…";
+      try {
+        const respuesta = await fetch("https://vsl1-incubadora-registros.arquitectasdeautores.workers.dev/", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            nombre: String(datos.get("nombre") || "").trim(),
+            email: String(datos.get("email") || "").trim(),
+            whatsapp: String(datos.get("whatsapp") || "").trim(),
+            turnstileToken: token
+          })
+        });
+        const resultado = await respuesta.json();
+        if (!respuesta.ok || !resultado.ok) {
+          throw new Error(resultado.error || "No se pudo completar el registro.");
+        }
+        estado.textContent = "✅ Prueba enviada. Comprueba Google Sheets y tu bandeja de correo.";
+        formulario.style.display = "none";
+      } catch (error) {
+        estado.textContent = "❌ " + (error.message || "Error de conexión.");
+        if (window.turnstile) window.turnstile.reset();
+        boton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
