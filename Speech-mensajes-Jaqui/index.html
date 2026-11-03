@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Mensajes de gestión | Jaqueline Rincón</title>
+  <style>
+    :root {
+      --ink: #283a4b;
+      --muted: #6a7986;
+      --line: #dce3e9;
+      --navy: #244d70;
+      --navy-dark: #173b5a;
+      --bg: #fbf9f5;
+      --female: #946b79;
+      --male: #5b809d;
+      --email: #947c5f;
+      --whatsapp: #5e806e;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Montserrat, Arial, Helvetica, sans-serif; color: var(--ink); background: radial-gradient(ellipse at 13% 4%, rgba(211,230,242,.54) 0%, transparent 36%), radial-gradient(ellipse at 93% 95%, rgba(236,220,195,.42) 0%, transparent 40%), var(--bg); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .topline { height: 3px; background: linear-gradient(90deg, #244d70 0%, #6f91a9 65%, #b6a181 100%); }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 45px 25px 70px; }
+    .intro { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid #dce4eb; }
+    .kicker { color: #8b775e; font-size: 10px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; margin-bottom: 13px; }
+    h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: clamp(35px, 4vw, 47px); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 12px; color: #234a69; }
+    .intro p { color: var(--muted); line-height: 1.65; margin: 0; max-width: 670px; font-size: 13px; }
+    .brand { min-width: 170px; text-align: right; font-size: 13px; font-weight: 700; line-height: 1.35; color: #294c69; padding-top: 8px; }
+    .brand span { display: block; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; font-size: 9px; color: #8c98a3; margin-top: 5px; }
+    .toolbar { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-wrap: wrap; align-items: end; gap: 18px; box-shadow: 0 3px 12px rgba(25, 50, 72, .025); }
+    .name-control { flex: 1 1 250px; min-width: 240px; }
+    label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #50677b; }
+    .name-control input { width: 100%; background: #fff; border: 1px solid #ccd8e2; outline: none; border-radius: 5px; padding: 12px 14px; color: var(--ink); font-size: 14px; }
+    .name-control input:focus { border-color: #698daa; box-shadow: 0 0 0 3px rgba(36,77,112,.10); }
+    .hint { font-size: 11px; color: #8c98a3; margin-top: 9px; }
+    .toolbar-right { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; flex: 1 1 490px; }
+    .tabs { display: inline-flex; flex-wrap: wrap; border-bottom: 1px solid #dce3e9; border-radius: 0; padding: 0; background: transparent; gap: 4px; }
+    .tab { padding: 11px 15px 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #6c7b88; font-size: 12px; font-weight: 700; border-radius: 0; white-space: nowrap; }
+    .tab.active { background: transparent; color: #244d70; border-bottom-color: #244d70; }
+    .gender-nav { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin: 28px 0 16px; }
+    .gender-nav[hidden] { display: none; }
+    .gender-label { font-size: 12px; font-weight: bold; color: #66778d; margin-right: 5px; }
+    .gender-btn { border: 1px solid #d6dee5; background: #fff; border-radius: 5px; padding: 9px 16px; color: #5c6f7f; font-size: 12px; font-weight: 700; }
+    .gender-btn.active[data-gender="mujer"] { background: #fff; border-color: #946b79; color: #835767; }
+    .gender-btn.active[data-gender="hombre"] { background: #fff; border-color: #5b809d; color: #436a88; }
+    .gender-btn.active[data-gender="ambos"] { background: #e8eff4; border-color: #bbccd9; color: #244d70; }
+    .section-heading { margin: 27px 0 19px; display: flex; justify-content: space-between; gap: 12px; align-items: flex-end; }
+    .section-heading h2 { margin: 0 0 6px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 30px; font-weight: 600; color: #244d70; letter-spacing: -.01em; }
+    .section-heading p { margin: 0; color: #758399; font-size: 13px; line-height: 1.45; }
+    .count { font-size: 12px; font-weight: bold; color: #8290a4; white-space: nowrap; }
+    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+    .card { background: #fff; border: 1px solid #dbe3e9; border-radius: 7px; overflow: hidden; box-shadow: 0 5px 15px rgba(25, 50, 72, .035); display: flex; flex-direction: column; }
+    .card-head { position: relative; min-height: 83px; padding: 19px 21px 17px 25px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 1px solid #e4e9ed; background: #fff; }
+    .card-head::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--navy); }
+    .card.female .card-head::before { background: var(--female); }
+    .card.male .card-head::before { background: var(--male); }
+    .card.email .card-head::before { background: var(--email); }
+    .card.whatsapp .card-head::before { background: var(--whatsapp); }
+    .card-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 600; line-height: 1.25; margin: 0 0 5px; color: #293e50; }
+    .card-subtitle { font-size: 11px; color: #758391; line-height: 1.35; }
+    .chip { border: 1px solid #dce3e8; color: #6a7986; font-size: 10px; font-weight: 700; border-radius: 3px; padding: 6px 9px; background: #f6f8fa; white-space: nowrap; }
+    .card-body { padding: 23px 21px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+    .subject { background: #f6f7f8; border: 1px solid #e1e6ea; border-radius: 5px; padding: 12px 13px; display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+    .subject .subject-text { font-size: 12px; line-height: 1.45; color: #4d5262; }
+    .subject .subject-text strong { display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8d8b7d; margin-bottom: 3px; }
+    .small-copy { flex: 0 0 auto; border: 1px solid #d3dde5; background: #fff; border-radius: 4px; padding: 7px 9px; font-weight: bold; font-size: 11px; color: #3e607a; }
+    .preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.77; color: #364657; margin: 0; flex: 1; }
+    .preview strong { font-weight: 800; color: #203d57; }
+    .card-footer { padding: 15px 21px 20px; border-top: 1px solid #f0edeb; }
+    .copy { width: 100%; border: 1px solid #244d70; border-radius: 4px; padding: 12px 14px; background: #244d70; color: #fff; font-weight: 700; letter-spacing: .04em; font-size: 12px; transition: background .15s, transform .15s; }
+    .copy:hover { background: #173b5a; }
+    .copy:active { transform: translateY(1px); }
+    .copy.copied { background: #416e59; border-color: #416e59; color: #fff; }
+    .footnote { text-align: center; font-size: 12px; line-height: 1.6; color: #8490a2; padding-top: 35px; }
+    .footnote strong { color: #55647a; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); padding: 12px 19px; border-radius: 10px; background: #203f61; color: #fff; font-weight: 700; font-size: 12px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,.16); z-index: 20; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 740px) {
+      .shell { padding: 25px 14px 45px; }
+      .intro { display: block; }
+      .brand { display: none; }
+      .cards { grid-template-columns: 1fr; }
+      .toolbar { padding: 15px; }
+      .tabs { width: 100%; }
+      .tab { flex: 1 1 95px; padding: 10px 9px; font-size: 12px; }
+      .section-heading { align-items: flex-start; }
+    }
+    @media print {
+      .toolbar, .gender-nav, .copy, .small-copy, .toast, .footnote { display: none !important; }
+      body { background: #fff; }
+      .shell { max-width: none; }
+      .cards { display: block; }
+      .card { break-inside: avoid; margin-bottom: 12px; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topline"></div>
+  <main class="shell">
+    <header class="intro">
+      <div>
+        <div class="kicker">Herramienta de comunicación</div>
+        <h1>Mensajes para tus gestiones</h1>
+        <p>Textos listos para copiar y pegar. Incluye tus mensajes originales y los cinco seguimientos en versiones para correo y WhatsApp.</p>
+      </div>
+      <div class="brand">Arquitectas de Autores<span>Jaqueline Rincón</span></div>
+    </header>
+
+    <section class="toolbar" aria-label="Personalizar y elegir mensajes">
+      <div class="name-control">
+        <label for="contactName">Nombre de la persona</label>
+        <input id="contactName" type="text" autocomplete="off" placeholder="Escribe el nombre aquí" aria-describedby="nameHint">
+        <div class="hint" id="nameHint">Si dejas el campo vacío, el mensaje conservará «Hola, ( )».</div>
+      </div>
+      <div class="toolbar-right">
+        <label>Tipo de mensaje</label>
+        <div class="tabs" role="tablist" aria-label="Elegir tipo de mensaje">
+          <button type="button" class="tab active" data-tab="originales" role="tab" aria-selected="true">Originales</button>
+          <button type="button" class="tab" data-tab="seguimientos" role="tab" aria-selected="false">Correos (5)</button>
+          <button type="button" class="tab" data-tab="whatsapp" role="tab" aria-selected="false">WhatsApp (5)</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="gender-nav" id="genderNav" aria-label="Elegir destinatario">
+      <span class="gender-label">Mostrar:</span>
+      <button type="button" class="gender-btn active" data-gender="ambos">Ambos</button>
+      <button type="button" class="gender-btn" data-gender="mujer">Mujeres</button>
+      <button type="button" class="gender-btn" data-gender="hombre">Hombres</button>
+    </nav>
+
+    <section class="section-heading" aria-live="polite">
+      <div>
+        <h2 id="sectionTitle">Mensajes originales</h2>
+        <p id="sectionDescription">Versiones para mujeres y hombres, con los colores de tu hoja de cálculo.</p>
+      </div>
+      <div class="count" id="count"></div>
+    </section>
+
+    <section class="cards" id="messageCards" aria-label="Mensajes disponibles"></section>
+    <footer class="footnote"><strong>Arquitectas de Autores</strong> · Elige el canal, copia el texto y pégalo donde lo necesites. Los asuntos de correo se copian por separado.</footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    'use strict';
+
+    // Contenido original de «Mensajes WhatApp». La única adaptación general es
+    // el saludo solicitado: «Hola, ( )», personalizable con el campo superior.
+    const originales = [
+      {
+        id: 'llamada-mujer', gender: 'mujer', title: 'Contacto · llamada telefónica',
+        body: `Hola, ( ).
+
+Soy Jaqueline Rincón, fundadora de Arquitectas de Autores Publicados.
+
+Hace poco usted se registró en nuestra página porque estaba *interesada en que le ayudemos con el libro que desea escribir*. Nosotras estaremos encantadas de guiarla.
+
+*Dígame, ¿es buen momento para conversar ahora?*
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'llamada-hombre', gender: 'hombre', title: 'Contacto · llamada telefónica',
+        body: `Hola, ( ).
+
+Soy Jaqueline Rincón, fundadora de Arquitectas de Autores Publicados.
+
+Hace poco usted se registró en nuestra página porque estaba *interesado en que le ayudemos con el libro que desea escribir*. Nosotras estaremos encantadas de guiarlo.
+
+*Dígame, ¿es buen momento para conversar ahora?*
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'primer-mujer', gender: 'mujer', title: 'Primer mensaje de WhatsApp',
+        body: `Hola, ( ).
+
+Soy Jaqueline Rincón, fundadora de Arquitectas de Autores Publicados.
+
+*¡Claro que podemos ayudarla!*
+
+Precisamente nos dedicamos a acompañar a personas que desean *transformar sus conocimientos o experiencias en un libro publicado* y no tienen claro por dónde empezar.
+
+*¿A qué hora tiene unos minutos libres?* Me gustaría llamarla para conocer un poco más sobre su proyecto y orientarla mejor.
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'primer-hombre', gender: 'hombre', title: 'Primer mensaje de WhatsApp',
+        body: `Hola, ( ).
+
+Soy Jaqueline Rincón, fundadora de Arquitectas de Autores Publicados.
+
+*¡Claro que podemos ayudarlo!*
+
+Precisamente nos dedicamos a acompañar a personas que desean *transformar sus conocimientos o experiencias en un libro publicado* y que no tienen claro por dónde empezar.
+
+*¿A qué hora tiene unos minutos libres?* Me gustaría llamarlo para conocer un poco más sobre su proyecto y orientarlo mejor.
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'segundo-mujer', gender: 'mujer', title: 'Segundo mensaje de WhatsApp',
+        body: `Hola, ( ).
+
+Soy Jaqueline Rincón, fundadora de Arquitectas de Autores Publicados.
+
+Hace poco usted se registró en nuestra página porque estaba *interesada en escribir un libro*. Nosotras estaremos encantadas de guiarla.
+
+Intenté comunicarme con usted por teléfono, pero no tuve éxito. Me gustaría conocer *qué libro tiene en mente* y conversar sobre *cómo podemos sacarlo adelante*.
+
+*¿A qué hora se encuentra libre para conversar al respecto?*
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'segundo-hombre', gender: 'hombre', title: 'Segundo mensaje de WhatsApp',
+        body: `Hola, ( ).
+
+Soy Jaqueline Rincón, fundadora de Arquitectas de Autores Publicados.
+
+Hace poco usted se registró en nuestra página porque estaba *interesado en escribir un libro*. Nosotras estaremos encantadas de guiarlo.
+
+Intenté comunicarme con usted por teléfono, pero no tuve éxito. Me gustaría conocer *qué libro tiene en mente* y conversar sobre *cómo podemos sacarlo adelante*.
+
+*¿A qué hora se encuentra libre para conversar al respecto?*
+
+💪🏼 📖 💖`
+      }
+    ];
+
+    // Los cinco textos aprobados se mantienen completos, con asuntos separados.
+    // Los asteriscos simples reproducen las negritas al pegar en WhatsApp.
+    const seguimientos = [
+      {
+        id: 'seguimiento-1', title: '1. Escribir su libro sí es posible',
+        focus: 'Recuperar la ilusión', subject: 'Escribir su libro sí es posible',
+        body: `Hola, ( ).
+
+*Nadie debería renunciar a escribir su libro solo por creer que es un sueño imposible.*
+
+Muchas personas tienen conocimientos, experiencias e historias valiosas que compartir, pero no saben cómo convertirlas en un libro.
+
+Precisamente en eso podemos ayudarle.
+
+En Arquitectas de Autores acompañamos a personas que desean escribir y publicar su libro, incluso si todavía no tienen claro por dónde empezar.
+
+Me gustaría conocer qué libro tiene en mente y orientarle sobre cómo podemos sacarlo adelante.
+
+💪🏼 📖 💖
+
+Jaqueline Rincón
+*Arquitectas de Autores*
+WhatsApp: 922 612 435`
+      },
+      {
+        id: 'seguimiento-2', title: '2. Lo que usted sabe puede ayudar a otros',
+        focus: 'El valor de compartir', subject: 'Lo que usted sabe puede ayudar a otros',
+        body: `Hola, ( ).
+
+*Su historia puede ayudar a alguien. Sus conocimientos y experiencias también.*
+
+A veces no somos conscientes de cuánto podemos aportar a otras personas con lo que hemos aprendido a lo largo de nuestra vida.
+
+Un libro permite compartir ese conocimiento, llegar a más personas y dejar algo valioso para quienes vienen detrás.
+
+*Nosotras podemos ayudarle a convertir todo eso en un libro publicado.*
+
+No necesita ser escritor. Lo más importante ya lo tiene: sus conocimientos y experiencias.
+
+💪🏼 📖 💖
+
+Jaqueline Rincón
+*Arquitectas de Autores*
+WhatsApp: 922 612 435`
+      },
+      {
+        id: 'seguimiento-3', title: '3. No siga postergando su libro',
+        focus: 'Dar el primer paso', subject: '¿Cuánto tiempo lleva pensando en escribir su libro?',
+        body: `Hola, ( ).
+
+*Si su sueño es escribir un libro, le invito a no seguir postergándolo.*
+
+Muchas personas pasan años pensando en escribir, esperando tener más tiempo, más conocimientos o las condiciones perfectas para empezar.
+
+Pero escribir un libro no tiene por qué ser un proceso complicado cuando se cuenta con una metodología y el acompañamiento adecuado.
+
+En *La Incubadora de mi Libro* le enseñamos cómo transformar sus conocimientos o experiencias en un libro, paso a paso, hasta su publicación.
+
+No necesita tenerlo todo resuelto para comenzar.
+
+💪🏼 📖 💖
+
+Jaqueline Rincón
+*Arquitectas de Autores*
+WhatsApp: 922 612 435`
+      },
+      {
+        id: 'seguimiento-5', title: '4. ¿Realmente es falta de tiempo?',
+        focus: 'Superar la objeción del tiempo', subject: '¿Realmente es falta de tiempo?',
+        body: `Hola, ( ).
+
+Muchas veces decimos que no tenemos tiempo para escribir un libro.
+
+*Pero ¿es realmente la falta de tiempo lo que nos detiene?*
+
+En muchos casos, lo que necesitamos es una ruta clara, una metodología y el acompañamiento adecuado para avanzar.
+
+Precisamente por eso, *La Incubadora de mi Libro está diseñada para que pueda escribir su libro en 12 semanas*, con actividades organizadas para que avance paso a paso, sin tener que dejar de lado sus responsabilidades y actividades diarias.
+
+No necesita esperar a tener más tiempo. Necesita aprender a aprovechar el que ya tiene.
+
+*Le invito a no seguir postergando su sueño de escribir un libro.*
+
+💪🏼 📖 💖
+
+Jaqueline Rincón
+*Arquitectas de Autores*
+WhatsApp: 922 612 435`
+      },
+      {
+        id: 'seguimiento-4', title: '5. Nuestro programa empieza pronto',
+        focus: 'Invitación al próximo inicio', subject: 'Su libro puede comenzar a hacerse realidad',
+        body: `Hola, ( ).
+
+*Nuestro programa La Incubadora de mi Libro empieza pronto.*
+
+Durante 12 semanas le acompañaremos en un recorrido para convertir sus conocimientos o experiencias en un libro publicado.
+
+Descubrirá qué quiere transmitir, aprenderá a organizar y escribir su contenido, mejorará su manuscrito y conocerá el proceso para publicarlo.
+
+Todo con una metodología clara y nuestro acompañamiento en cada etapa.
+
+*Si escribir un libro está entre sus proyectos, esta puede ser la oportunidad de hacerlo realidad.*
+
+¿Le gustaría conocer cómo funciona el programa y qué necesita para comenzar?
+
+💪🏼 📖 💖
+
+Jaqueline Rincón
+*Arquitectas de Autores*
+WhatsApp: 922 612 435`
+      }
+    ];
+
+    // Versiones breves y naturales de los mismos cinco temas para chat de WhatsApp.
+    // No requieren variantes por género: el trato de «usted» es válido para ambos.
+    const whatsappSeguimiento = [
+      {
+        id: 'whatsapp-1', title: '1. Escribir su libro sí es posible',
+        focus: 'El sueño de escribir un libro',
+        body: `Hola, ( ).
+
+*Nadie debería renunciar a escribir su libro solo por creer que es un sueño imposible.*
+
+Si tiene conocimientos o experiencias que desea compartir, ya tiene lo más importante para empezar. Nosotras podemos ayudarle a darles forma y convertirlos en un libro publicado.
+
+Dígame, ¿qué libro tiene en mente?
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'whatsapp-2', title: '2. Lo que tiene para compartir',
+        focus: 'El valor de su experiencia',
+        body: `Hola, ( ).
+
+*Su historia puede ayudar a alguien.* Sus conocimientos y experiencias también.
+
+Lo que ha aprendido puede ser útil para otras personas. En Arquitectas de Autores le ayudamos a organizar ese contenido y convertirlo en un libro.
+
+¿Qué le gustaría transmitir a través del suyo?
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'whatsapp-3', title: '3. No siga postergando su libro',
+        focus: 'Dar el primer paso',
+        body: `Hola, ( ).
+
+*Si su sueño es escribir un libro, le invito a no seguir postergándolo.*
+
+No necesita ser escritor ni tener todo resuelto. Con una metodología y acompañamiento puede avanzar paso a paso, desde la idea hasta la publicación.
+
+Precisamente para eso está La Incubadora de mi Libro.
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'whatsapp-4', title: '4. ¿Realmente es falta de tiempo?',
+        focus: 'El tiempo para escribir',
+        body: `Hola, ( ).
+
+Muchas veces decimos que no tenemos tiempo para escribir un libro. *Pero ¿es realmente la falta de tiempo lo que nos detiene?*
+
+La Incubadora de mi Libro está organizada para que pueda escribir su libro en 12 semanas, avanzando paso a paso sin dejar de lado sus actividades diarias.
+
+*Le invito a no seguir postergando ese proyecto.*
+
+💪🏼 📖 💖`
+      },
+      {
+        id: 'whatsapp-5', title: '5. Nuestro programa empieza pronto',
+        focus: 'Próximo inicio de la Incubadora',
+        body: `Hola, ( ).
+
+*Nuestro programa La Incubadora de mi Libro empieza pronto.*
+
+Durante 12 semanas le acompañamos a descubrir qué quiere transmitir, escribir, mejorar su manuscrito y prepararlo para su publicación.
+
+Si desea conocer los horarios y cómo participar, podemos compartirle la información.
+
+💪🏼 📖 💖`
+      }
+    ];
+
+    let activeTab = 'originales';
+    let activeGender = 'ambos';
+    let toastTimer;
+
+    const cardsEl = document.getElementById('messageCards');
+    const nameEl = document.getElementById('contactName');
+    const toastEl = document.getElementById('toast');
+
+    function personalized(body) {
+      const name = nameEl.value.trim().replace(/\s+/g, ' ');
+      return name ? body.replace(/^Hola, \( \)\./, `Hola, ${name}.`) : body;
+    }
+
+    function escapeHtml(value) {
+      return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function formattedPreview(message) {
+      return escapeHtml(personalized(message)).replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>');
+    }
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toastEl.textContent = message;
+      toastEl.classList.add('show');
+      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2300);
+    }
+
+    async function copyText(value) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+          return true;
+        }
+      } catch (_) { /* Intentar el método compatible con archivos locales. */ }
+
+      const temp = document.createElement('textarea');
+      temp.value = value;
+      temp.setAttribute('readonly', '');
+      temp.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+      temp.remove();
+      return ok;
+    }
+
+    function makeCard(item) {
+      const email = activeTab === 'seguimientos';
+      const whatsapp = activeTab === 'whatsapp';
+      const card = document.createElement('article');
+      const category = email ? 'email' : (whatsapp ? 'whatsapp' : (item.gender === 'mujer' ? 'female' : 'male'));
+      card.className = `card ${category}`;
+
+      const head = document.createElement('div');
+      head.className = 'card-head';
+      const headInfo = document.createElement('div');
+      const title = document.createElement('div');
+      title.className = 'card-title';
+      title.textContent = item.title;
+      const sub = document.createElement('div');
+      sub.className = 'card-subtitle';
+      sub.textContent = (email || whatsapp) ? item.focus : (item.title.includes('llamada') ? 'Guion para conversación telefónica' : 'Listo para WhatsApp');
+      headInfo.append(title, sub);
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = email ? 'Correo' : (whatsapp ? 'WhatsApp' : (item.gender === 'mujer' ? 'Mujer' : 'Hombre'));
+      head.append(headInfo, chip);
+
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      if (email) {
+        const subject = document.createElement('div');
+        subject.className = 'subject';
+        const subjectText = document.createElement('div');
+        subjectText.className = 'subject-text';
+        const subjectLabel = document.createElement('strong');
+        subjectLabel.textContent = 'Asunto del correo';
+        const subjectValue = document.createElement('span');
+        subjectValue.textContent = item.subject;
+        subjectText.append(subjectLabel, subjectValue);
+        const subjectCopy = document.createElement('button');
+        subjectCopy.type = 'button';
+        subjectCopy.className = 'small-copy';
+        subjectCopy.textContent = 'Copiar asunto';
+        subjectCopy.addEventListener('click', async () => {
+          const ok = await copyText(item.subject);
+          showToast(ok ? 'Asunto copiado' : 'Selecciona el asunto para copiarlo');
+        });
+        subject.append(subjectText, subjectCopy);
+        body.appendChild(subject);
+      }
+
+      const preview = document.createElement('p');
+      preview.className = 'preview';
+      preview.innerHTML = formattedPreview(item.body);
+      body.appendChild(preview);
+
+      const footer = document.createElement('div');
+      footer.className = 'card-footer';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy';
+      button.textContent = 'COPIAR MENSAJE';
+      button.setAttribute('aria-label', `Copiar ${item.title}`);
+      button.addEventListener('click', async () => {
+        const ok = await copyText(personalized(item.body));
+        if (ok) {
+          button.textContent = '✓ ¡COPIADO!';
+          button.classList.add('copied');
+          showToast('Texto listo para pegar');
+          setTimeout(() => { button.textContent = 'COPIAR MENSAJE'; button.classList.remove('copied'); }, 2000);
+        } else {
+          showToast('No se pudo copiar automáticamente');
+        }
+      });
+      footer.appendChild(button);
+      card.append(head, body, footer);
+      return card;
+    }
+
+    function render() {
+      const email = activeTab === 'seguimientos';
+      const whatsapp = activeTab === 'whatsapp';
+      const items = email ? seguimientos : (whatsapp ? whatsappSeguimiento : originales.filter(x => activeGender === 'ambos' || x.gender === activeGender));
+      document.getElementById('genderNav').hidden = email || whatsapp;
+      document.getElementById('sectionTitle').textContent = email ? 'Correos de seguimiento' : (whatsapp ? 'Seguimientos para WhatsApp' : 'Mensajes originales');
+      document.getElementById('sectionDescription').textContent = email
+        ? 'Cinco correos completos con su asunto, listos para copiar.'
+        : (whatsapp ? 'Los mismos cinco enfoques, adaptados a mensajes breves de chat. Son válidos para hombres y mujeres.'
+          : 'Los originales de tu hoja, con versiones para mujeres y hombres y el saludo personalizable.');
+      document.getElementById('count').textContent = `${items.length} ${items.length === 1 ? 'mensaje' : 'mensajes'}`;
+      cardsEl.replaceChildren(...items.map(makeCard));
+    }
+
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeTab = btn.dataset.tab;
+        document.querySelectorAll('[data-tab]').forEach(el => {
+          const selected = el === btn;
+          el.classList.toggle('active', selected);
+          el.setAttribute('aria-selected', String(selected));
+        });
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-gender]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeGender = btn.dataset.gender;
+        document.querySelectorAll('[data-gender]').forEach(el => el.classList.toggle('active', el === btn));
+        render();
+      });
+    });
+
+    nameEl.addEventListener('input', () => {
+      document.querySelectorAll('.card .preview').forEach((el, index) => {
+        const items = activeTab === 'seguimientos' ? seguimientos : (activeTab === 'whatsapp' ? whatsappSeguimiento : originales.filter(x => activeGender === 'ambos' || x.gender === activeGender));
+        el.innerHTML = formattedPreview(items[index].body);
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
