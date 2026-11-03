@@ -23,37 +23,37 @@
     button, input { font: inherit; }
     button { cursor: pointer; }
     .topline { height: 3px; background: #244d70; }
-    .shell { max-width: 1180px; margin: 0 auto; padding: 45px 25px 70px; }
-    .intro { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid #dce4eb; }
-    .kicker { color: #8b775e; font-size: 10px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; margin-bottom: 13px; }
-    h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: clamp(35px, 4vw, 47px); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 12px; color: #234a69; }
-    .intro p { color: var(--muted); line-height: 1.65; margin: 0; max-width: 670px; font-size: 13px; }
-    .brand { min-width: 170px; text-align: right; font-size: 13px; font-weight: 700; line-height: 1.35; color: #294c69; padding-top: 8px; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 19px 24px 55px; }
+    .intro { display: flex; justify-content: space-between; align-items: center; gap: 22px; margin-bottom: 13px; padding-bottom: 12px; border-bottom: 1px solid #dce4eb; }
+    .kicker { color: #8b775e; font-size: 10px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; margin-bottom: 5px; }
+    h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: clamp(29px, 3vw, 37px); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 6px; color: #234a69; }
+    .intro p { color: var(--muted); line-height: 1.42; margin: 0; max-width: 670px; font-size: 12px; }
+    .brand { min-width: 170px; text-align: right; font-size: 12px; font-weight: 700; line-height: 1.3; color: #294c69; padding-top: 0; }
     .brand span { display: block; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; font-size: 9px; color: #8c98a3; margin-top: 5px; }
-    .toolbar { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-wrap: wrap; align-items: end; gap: 18px; box-shadow: 0 3px 12px rgba(25, 50, 72, .025); }
-    .name-control { flex: 1 1 250px; min-width: 240px; }
-    label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #50677b; }
-    .name-control input { width: 100%; background: #fff; border: 1px solid #ccd8e2; outline: none; border-radius: 5px; padding: 12px 14px; color: var(--ink); font-size: 14px; }
+    .toolbar { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 13px; box-shadow: 0 3px 12px rgba(25, 50, 72, .025); }
+    .name-control { flex: 1 1 265px; min-width: 240px; background: #e9f1f7; border: 1px solid #c9dbe8; border-left: 3px solid #446e8f; border-radius: 5px; padding: 9px 12px; }
+    label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 700; color: #50677b; }
+    .name-control input { width: 100%; background: #fff; border: 1px solid #ccd8e2; outline: none; border-radius: 5px; padding: 9px 11px; color: var(--ink); font-size: 14px; }
     .name-control input:focus { border-color: #698daa; box-shadow: 0 0 0 3px rgba(36,77,112,.10); }
-    .hint { font-size: 11px; color: #8c98a3; margin-top: 9px; }
-    .toolbar-right { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; flex: 1 1 490px; }
+    .hint { font-size: 10px; color: #647d90; margin-top: 5px; }
+    .toolbar-right { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; flex: 1 1 420px; }
     .tabs { display: inline-flex; flex-wrap: wrap; border-bottom: 1px solid #dce3e9; border-radius: 0; padding: 0; background: transparent; gap: 4px; }
-    .tab { padding: 11px 15px 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #6c7b88; font-size: 12px; font-weight: 700; border-radius: 0; white-space: nowrap; }
+    .tab { padding: 9px 14px 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #6c7b88; font-size: 12px; font-weight: 700; border-radius: 0; white-space: nowrap; }
     .tab.active { background: transparent; color: #244d70; border-bottom-color: #244d70; }
-    .gender-nav { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin: 28px 0 16px; }
+    .gender-nav { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin: 13px 0 9px; }
     .gender-nav[hidden] { display: none; }
     .gender-label { font-size: 12px; font-weight: bold; color: #66778d; margin-right: 5px; }
-    .gender-btn { border: 1px solid #d6dee5; background: #fff; border-radius: 5px; padding: 9px 16px; color: #5c6f7f; font-size: 12px; font-weight: 700; }
+    .gender-btn { border: 1px solid #d6dee5; background: #fff; border-radius: 5px; padding: 7px 14px; color: #5c6f7f; font-size: 12px; font-weight: 700; }
     .gender-btn.active[data-gender="mujer"] { background: #fff; border-color: #946b79; color: #835767; }
     .gender-btn.active[data-gender="hombre"] { background: #fff; border-color: #5b809d; color: #436a88; }
     .gender-btn.active[data-gender="ambos"] { background: #e8eff4; border-color: #bbccd9; color: #244d70; }
-    .section-heading { margin: 27px 0 19px; display: flex; justify-content: space-between; gap: 12px; align-items: flex-end; }
-    .section-heading h2 { margin: 0 0 6px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 30px; font-weight: 600; color: #244d70; letter-spacing: -.01em; }
-    .section-heading p { margin: 0; color: #758399; font-size: 13px; line-height: 1.45; }
+    .section-heading { margin: 12px 0 11px; display: flex; justify-content: space-between; gap: 12px; align-items: flex-end; }
+    .section-heading h2 { margin: 0 0 3px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 600; color: #244d70; letter-spacing: -.01em; }
+    .section-heading p { margin: 0; color: #758399; font-size: 12px; line-height: 1.35; }
     .count { font-size: 12px; font-weight: bold; color: #8290a4; white-space: nowrap; }
-    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; align-items: stretch; }
     .card { background: #fff; border: 1px solid #dbe3e9; border-radius: 7px; overflow: hidden; box-shadow: 0 5px 15px rgba(25, 50, 72, .035); display: flex; flex-direction: column; }
-    .card-head { position: relative; min-height: 83px; padding: 19px 21px 17px 25px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 1px solid #e4e9ed; background: #fff; }
+    .card-head { position: relative; min-height: 70px; padding: 14px 18px 13px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 1px solid #e4e9ed; background: #fff; }
     .card-head::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--navy); }
     .card.female .card-head::before { background: var(--female); }
     .card.male .card-head::before { background: var(--male); }
@@ -62,15 +62,15 @@
     .card-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 600; line-height: 1.25; margin: 0 0 5px; color: #293e50; }
     .card-subtitle { font-size: 11px; color: #758391; line-height: 1.35; }
     .chip { border: 1px solid #dce3e8; color: #6a7986; font-size: 10px; font-weight: 700; border-radius: 3px; padding: 6px 9px; background: #f6f8fa; white-space: nowrap; }
-    .card-body { padding: 23px 21px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+    .card-body { padding: 17px 19px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
     .subject { background: #f6f7f8; border: 1px solid #e1e6ea; border-radius: 5px; padding: 12px 13px; display: flex; gap: 8px; justify-content: space-between; align-items: center; }
     .subject .subject-text { font-size: 12px; line-height: 1.45; color: #4d5262; }
     .subject .subject-text strong { display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8d8b7d; margin-bottom: 3px; }
     .small-copy { flex: 0 0 auto; border: 1px solid #d3dde5; background: #fff; border-radius: 4px; padding: 7px 9px; font-weight: bold; font-size: 11px; color: #3e607a; }
-    .preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.77; color: #364657; margin: 0; flex: 1; }
+    .preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.68; color: #364657; margin: 0; flex: 1; }
     .preview strong { font-weight: 800; color: #203d57; }
-    .card-footer { padding: 15px 21px 20px; border-top: 1px solid #f0edeb; }
-    .copy { width: 100%; border: 1px solid #244d70; border-radius: 4px; padding: 12px 14px; background: #244d70; color: #fff; font-weight: 700; letter-spacing: .04em; font-size: 12px; transition: background .15s, transform .15s; }
+    .card-footer { padding: 11px 19px 13px; border-top: 1px solid #f0edeb; }
+    .copy { width: 100%; border: 1px solid #244d70; border-radius: 4px; padding: 10px 14px; background: #244d70; color: #fff; font-weight: 700; letter-spacing: .04em; font-size: 12px; transition: background .15s, transform .15s; }
     .copy:hover { background: #173b5a; }
     .copy:active { transform: translateY(1px); }
     .copy.copied { background: #416e59; border-color: #416e59; color: #fff; }
@@ -79,11 +79,11 @@
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); padding: 12px 19px; border-radius: 10px; background: #203f61; color: #fff; font-weight: 700; font-size: 12px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,.16); z-index: 20; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     @media (max-width: 740px) {
-      .shell { padding: 25px 14px 45px; }
+      .shell { padding: 15px 12px 38px; }
       .intro { display: block; }
       .brand { display: none; }
       .cards { grid-template-columns: 1fr; }
-      .toolbar { padding: 15px; }
+      .toolbar { padding: 10px; }
       .tabs { width: 100%; }
       .tab { flex: 1 1 95px; padding: 10px 9px; font-size: 12px; }
       .section-heading { align-items: flex-start; }
@@ -153,7 +153,7 @@
     const originales = [
       {
         id: 'llamada-mujer', gender: 'mujer', title: 'Contacto · llamada telefónica',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
 
@@ -165,7 +165,7 @@ Hace poco usted se registró en nuestra página porque estaba *interesada en que
       },
       {
         id: 'llamada-hombre', gender: 'hombre', title: 'Contacto · llamada telefónica',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
 
@@ -177,7 +177,7 @@ Hace poco usted se registró en nuestra página porque estaba *interesado en que
       },
       {
         id: 'primer-mujer', gender: 'mujer', title: 'Primer mensaje de WhatsApp',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
 
@@ -191,7 +191,7 @@ Precisamente nos dedicamos a acompañar a personas que desean *transformar sus c
       },
       {
         id: 'primer-hombre', gender: 'hombre', title: 'Primer mensaje de WhatsApp',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
 
@@ -205,7 +205,7 @@ Precisamente nos dedicamos a acompañar a personas que desean *transformar sus c
       },
       {
         id: 'segundo-mujer', gender: 'mujer', title: 'Segundo mensaje de WhatsApp',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
 
@@ -219,7 +219,7 @@ Intenté comunicarme con usted por teléfono, pero no tuve éxito. Me gustaría 
       },
       {
         id: 'segundo-hombre', gender: 'hombre', title: 'Segundo mensaje de WhatsApp',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
 
@@ -239,7 +239,7 @@ Intenté comunicarme con usted por teléfono, pero no tuve éxito. Me gustaría 
       {
         id: 'seguimiento-1', title: '1. Escribir su libro sí es posible',
         focus: 'Recuperar la ilusión', subject: 'Escribir su libro sí es posible',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Nadie debería renunciar a escribir su libro solo por creer que es un sueño imposible.*
 
@@ -249,7 +249,7 @@ Precisamente en eso podemos ayudarle.
 
 En Arquitectas de Autores acompañamos a personas que desean escribir y publicar su libro, incluso si todavía no tienen claro por dónde empezar.
 
-Me gustaría conocer qué libro tiene en mente y orientarle sobre cómo podemos sacarlo adelante.
+Me gustaría conocer qué libro tiene en mente y explicarle cómo podemos sacarlo adelante.
 
 💪🏼 📖 💖
 
@@ -260,7 +260,7 @@ WhatsApp: 912 085 728`
       {
         id: 'seguimiento-2', title: '2. Lo que usted sabe puede ayudar a otros',
         focus: 'El valor de compartir', subject: 'Lo que usted sabe puede ayudar a otros',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Su historia puede ayudar a alguien. Sus conocimientos y experiencias también.*
 
@@ -270,7 +270,7 @@ Un libro permite compartir ese conocimiento, llegar a más personas y dejar algo
 
 *Nosotras podemos ayudarle a convertir todo eso en un libro publicado.*
 
-No necesita ser escritor. Lo más importante ya lo tiene: sus conocimientos y experiencias.
+No necesita experiencia previa escribiendo libros. Lo más importante ya lo tiene: sus conocimientos y experiencias.
 
 💪🏼 📖 💖
 
@@ -281,7 +281,7 @@ WhatsApp: 912 085 728`
       {
         id: 'seguimiento-3', title: '3. No siga postergando su libro',
         focus: 'Dar el primer paso', subject: '¿Cuánto tiempo lleva pensando en escribir su libro?',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Si su sueño es escribir un libro, le invito a no seguir postergándolo.*
 
@@ -302,7 +302,7 @@ WhatsApp: 912 085 728`
       {
         id: 'seguimiento-5', title: '4. ¿Realmente es falta de tiempo?',
         focus: 'Superar la objeción del tiempo', subject: '¿Realmente es falta de tiempo?',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Muchas veces decimos que no tenemos tiempo para escribir un libro.
 
@@ -310,7 +310,7 @@ Muchas veces decimos que no tenemos tiempo para escribir un libro.
 
 En muchos casos, lo que necesitamos es una ruta clara, una metodología y el acompañamiento adecuado para avanzar.
 
-Precisamente por eso, *La Incubadora de mi Libro está diseñada para que pueda escribir su libro en 12 semanas*, con actividades organizadas para que avance paso a paso, sin tener que dejar de lado sus responsabilidades y actividades diarias.
+Precisamente por eso, *La Incubadora de mi Libro está diseñada para que pueda escribir su libro en 12 semanas*, con actividades organizadas para que avance paso a paso, sin dejar de atender sus responsabilidades diarias.
 
 No necesita esperar a tener más tiempo. Necesita aprender a aprovechar el que ya tiene.
 
@@ -325,7 +325,7 @@ WhatsApp: 912 085 728`
       {
         id: 'seguimiento-4', title: '5. Nuestro programa empieza pronto',
         focus: 'Invitación al próximo inicio', subject: 'Su libro puede comenzar a hacerse realidad',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Nuestro programa La Incubadora de mi Libro empieza pronto.*
 
@@ -353,11 +353,11 @@ WhatsApp: 912 085 728`
       {
         id: 'whatsapp-1', title: '1. Escribir su libro sí es posible',
         focus: 'El sueño de escribir un libro',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Nadie debería renunciar a escribir su libro solo por creer que es un sueño imposible.*
 
-Si tiene conocimientos o experiencias que desea compartir, ya tiene lo más importante para empezar. Nosotras podemos ayudarle a darles forma y convertirlos en un libro publicado.
+Si tiene conocimientos o experiencias que desea compartir, ya tiene lo más importante para empezar. Nosotras podemos ayudarle a organizar ese material y convertirlo en un libro publicado.
 
 Dígame, ¿qué libro tiene en mente?
 
@@ -366,7 +366,7 @@ Dígame, ¿qué libro tiene en mente?
       {
         id: 'whatsapp-2', title: '2. Lo que tiene para compartir',
         focus: 'El valor de su experiencia',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Su historia puede ayudar a alguien.* Sus conocimientos y experiencias también.
 
@@ -379,11 +379,11 @@ Lo que ha aprendido puede ser útil para otras personas. En Arquitectas de Autor
       {
         id: 'whatsapp-3', title: '3. No siga postergando su libro',
         focus: 'Dar el primer paso',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Si su sueño es escribir un libro, le invito a no seguir postergándolo.*
 
-No necesita ser escritor ni tener todo resuelto. Con una metodología y acompañamiento puede avanzar paso a paso, desde la idea hasta la publicación.
+No necesita experiencia previa escribiendo libros ni tenerlo todo resuelto. Con una metodología y acompañamiento puede avanzar paso a paso, desde la idea hasta la publicación.
 
 Precisamente para eso está La Incubadora de mi Libro.
 
@@ -392,7 +392,7 @@ Precisamente para eso está La Incubadora de mi Libro.
       {
         id: 'whatsapp-4', title: '4. ¿Realmente es falta de tiempo?',
         focus: 'El tiempo para escribir',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 Muchas veces decimos que no tenemos tiempo para escribir un libro. *Pero ¿es realmente la falta de tiempo lo que nos detiene?*
 
@@ -405,11 +405,11 @@ La Incubadora de mi Libro está organizada para que pueda escribir su libro en 1
       {
         id: 'whatsapp-5', title: '5. Nuestro programa empieza pronto',
         focus: 'Próximo inicio de la Incubadora',
-        body: `Hola, ( ).
+        body: `Hola, ( )
 
 *Nuestro programa La Incubadora de mi Libro empieza pronto.*
 
-Durante 12 semanas le acompañamos a descubrir qué quiere transmitir, escribir, mejorar su manuscrito y prepararlo para su publicación.
+Durante 12 semanas le acompañamos para definir qué quiere transmitir, escribir su manuscrito, mejorarlo y prepararlo para su publicación.
 
 Si desea conocer los horarios y cómo participar, podemos compartirle la información.
 
@@ -427,7 +427,7 @@ Si desea conocer los horarios y cómo participar, podemos compartirle la informa
 
     function personalized(body) {
       const name = nameEl.value.trim().replace(/\s+/g, ' ');
-      return name ? body.replace(/^Hola, \( \)\./, `Hola, ${name}.`) : body;
+      return name ? body.replace(/^Hola, \( \)/, `Hola, ${name}`) : body;
     }
 
     function escapeHtml(value) {
