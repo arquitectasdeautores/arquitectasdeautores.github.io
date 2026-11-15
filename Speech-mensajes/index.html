@@ -1,587 +1,495 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>Mensajes de gestión | Arquitectas de Autores</title>
-  <style>
-    :root {
-      --ink: #283a4b;
-      --muted: #6a7986;
-      --line: #dce3e9;
-      --navy: #244d70;
-      --navy-dark: #173b5a;
-      --bg: #f5f6f7;
-      --female: #946b79;
-      --male: #5b809d;
-      --email: #947c5f;
-      --whatsapp: #5e806e;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Montserrat, Arial, Helvetica, sans-serif; color: var(--ink); background: var(--bg); }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    .topline { height: 3px; background: #244d70; }
-    .shell { max-width: 1180px; margin: 0 auto; padding: 19px 24px 55px; }
-    .intro { display: flex; justify-content: space-between; align-items: center; gap: 22px; margin-bottom: 13px; padding-bottom: 12px; border-bottom: 1px solid #dce4eb; }
-    .kicker { color: #8b775e; font-size: 10px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; margin-bottom: 5px; }
-    h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: clamp(29px, 3vw, 37px); line-height: 1.06; letter-spacing: -.02em; margin: 0 0 6px; color: #234a69; }
-    .intro p { color: var(--muted); line-height: 1.42; margin: 0; max-width: 670px; font-size: 12px; }
-    .brand { min-width: 170px; text-align: right; font-size: 12px; font-weight: 700; line-height: 1.3; color: #294c69; padding-top: 0; }
-    .brand span { display: block; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; font-size: 9px; color: #8c98a3; margin-top: 5px; }
-    .toolbar { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 13px; box-shadow: 0 3px 12px rgba(25, 50, 72, .025); }
-    .name-control { flex: 1 1 265px; min-width: 240px; background: #e9f1f7; border: 1px solid #c9dbe8; border-left: 3px solid #446e8f; border-radius: 5px; padding: 9px 12px; }
-    label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 700; color: #50677b; }
-    .name-control input { width: 100%; background: #fff; border: 1px solid #ccd8e2; outline: none; border-radius: 5px; padding: 9px 11px; color: var(--ink); font-size: 14px; }
-    .name-control input:focus { border-color: #698daa; box-shadow: 0 0 0 3px rgba(36,77,112,.10); }
-    .hint { font-size: 10px; color: #647d90; margin-top: 5px; }
-    .toolbar-right { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; flex: 1 1 420px; }
-    .tabs { display: inline-flex; flex-wrap: wrap; border-bottom: 1px solid #dce3e9; border-radius: 0; padding: 0; background: transparent; gap: 4px; }
-    .tab { padding: 9px 14px 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #6c7b88; font-size: 12px; font-weight: 700; border-radius: 0; white-space: nowrap; }
-    .tab.active { background: transparent; color: #244d70; border-bottom-color: #244d70; }
-    .gender-nav { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin: 13px 0 9px; }
-    .gender-nav[hidden] { display: none; }
-    .gender-label { font-size: 12px; font-weight: bold; color: #66778d; margin-right: 5px; }
-    .gender-btn { border: 1px solid #d6dee5; background: #fff; border-radius: 5px; padding: 7px 14px; color: #5c6f7f; font-size: 12px; font-weight: 700; }
-    .gender-btn.active[data-gender="mujer"] { background: #fff; border-color: #946b79; color: #835767; }
-    .gender-btn.active[data-gender="hombre"] { background: #fff; border-color: #5b809d; color: #436a88; }
-    .gender-btn.active[data-gender="ambos"] { background: #e8eff4; border-color: #bbccd9; color: #244d70; }
-    .section-heading { margin: 12px 0 11px; display: flex; justify-content: space-between; gap: 12px; align-items: flex-end; }
-    .section-heading h2 { margin: 0 0 3px; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 600; color: #244d70; letter-spacing: -.01em; }
-    .section-heading p { margin: 0; color: #758399; font-size: 12px; line-height: 1.35; }
-    .count { font-size: 12px; font-weight: bold; color: #8290a4; white-space: nowrap; }
-    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; align-items: stretch; }
-    .card { background: #fff; border: 1px solid #dbe3e9; border-radius: 7px; overflow: hidden; box-shadow: 0 5px 15px rgba(25, 50, 72, .035); display: flex; flex-direction: column; }
-    .card-head { position: relative; min-height: 70px; padding: 14px 18px 13px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 1px solid #e4e9ed; background: #fff; }
-    .card-head::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--navy); }
-    .card.female .card-head::before { background: var(--female); }
-    .card.male .card-head::before { background: var(--male); }
-    .card.email .card-head::before { background: var(--email); }
-    .card.whatsapp .card-head::before { background: var(--whatsapp); }
-    .card-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 600; line-height: 1.25; margin: 0 0 5px; color: #293e50; }
-    .card-subtitle { font-size: 11px; color: #758391; line-height: 1.35; }
-    .chip { border: 1px solid #dce3e8; color: #6a7986; font-size: 10px; font-weight: 700; border-radius: 3px; padding: 6px 9px; background: #f6f8fa; white-space: nowrap; }
-    .card-body { padding: 17px 19px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
-    .subject { background: #f6f7f8; border: 1px solid #e1e6ea; border-radius: 5px; padding: 12px 13px; display: flex; gap: 8px; justify-content: space-between; align-items: center; }
-    .subject .subject-text { font-size: 12px; line-height: 1.45; color: #4d5262; }
-    .subject .subject-text strong { display: block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8d8b7d; margin-bottom: 3px; }
-    .small-copy { flex: 0 0 auto; border: 1px solid #d3dde5; background: #fff; border-radius: 4px; padding: 7px 9px; font-weight: bold; font-size: 11px; color: #3e607a; }
-    .preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.68; color: #364657; margin: 0; flex: 1; }
-    .preview strong { font-weight: 800; color: #203d57; }
-    .card-footer { padding: 11px 19px 13px; border-top: 1px solid #f0edeb; }
-    .copy { width: 100%; border: 1px solid #244d70; border-radius: 4px; padding: 10px 14px; background: #244d70; color: #fff; font-weight: 700; letter-spacing: .04em; font-size: 12px; transition: background .15s, transform .15s; }
-    .copy:hover { background: #173b5a; }
-    .copy:active { transform: translateY(1px); }
-    .copy.copied { background: #416e59; border-color: #416e59; color: #fff; }
-    .footnote { text-align: center; font-size: 12px; line-height: 1.6; color: #8490a2; padding-top: 35px; }
-    .footnote strong { color: #55647a; }
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); padding: 12px 19px; border-radius: 10px; background: #203f61; color: #fff; font-weight: 700; font-size: 12px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,.16); z-index: 20; }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    @media (max-width: 740px) {
-      .shell { padding: 15px 12px 38px; }
-      .intro { display: block; }
-      .brand { display: none; }
-      .cards { grid-template-columns: 1fr; }
-      .toolbar { padding: 10px; }
-      .tabs { width: 100%; }
-      .tab { flex: 1 1 95px; padding: 10px 9px; font-size: 12px; }
-      .section-heading { align-items: flex-start; }
-    }
-    @media print {
-      .toolbar, .gender-nav, .copy, .small-copy, .toast, .footnote { display: none !important; }
-      body { background: #fff; }
-      .shell { max-width: none; }
-      .cards { display: block; }
-      .card { break-inside: avoid; margin-bottom: 12px; box-shadow: none; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protocolo de ventas · Arquitectas de Autores</title>
+<style>
+:root{--f:Aptos,"Aptos Display",Calibri,"Segoe UI",system-ui,sans-serif;
+--navy:#203447;--navy2:#1C3245;--gold:#BA9254;--gold-d:#7d5f2c;--teal:#1A756B;--mist:#D6E0E5;--paper:#FAF9F6;--cream:#FBF6EB;--cream2:#F3E8D3;--slate:#586A79;--tealsoft:#EDF5F3;--ink:#203447;--line:#D6E0E5}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--paper);color:var(--ink);font:13.5px/1.5 var(--f)}
+.wrap{max-width:1200px;margin:0 auto;padding:30px 22px 90px}
+h1,h2,h3,h4,button,input,select{font-family:var(--f)}
+h1,h2,h3,h4{line-height:1.25;margin:0;color:var(--navy)}
+header{padding-bottom:16px;border-bottom:2px solid var(--gold)}
+header .eyebrow{font-size:11px;letter-spacing:.2em;color:var(--gold-d);font-weight:700}
+header h1{font-size:24px;margin:6px 0 4px;font-weight:700}
+header p{margin:0;color:var(--slate);font-size:12px}
+.ctrl{background:#fff;border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:12px;padding:16px 20px;margin:20px 0 6px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px 16px;box-shadow:0 1px 3px rgba(32,52,71,.06)}
+.fld label,.fld .lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-bottom:5px}
+.fld input[type=text],.fld input[type=date],.fld select{width:100%;padding:9px 10px;border:1px solid #bccbd3;border-radius:8px;font:inherit;font-size:12px;background:#fff;color:var(--ink)}
+.fld input:focus,.fld select:focus{outline:2px solid var(--teal);outline-offset:1px}
+.seg{display:flex;border:1px solid #bccbd3;border-radius:8px;overflow:hidden;background:#fff}
+.seg label{flex:1;margin:0;text-transform:none;letter-spacing:0;font-size:12px;font-weight:600;color:var(--ink);text-align:center;cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;padding:9px 6px}
+.seg input:checked+span{background:var(--teal);color:#fff}
+.seg input:focus-visible+span{outline:2px solid var(--gold);outline-offset:-2px}
+.hint{grid-column:1/-1;font-size:11px;color:var(--slate);margin:0}
+.tabs{position:sticky;top:0;z-index:5;background:var(--paper);display:flex;gap:30px;border-bottom:1px solid var(--line);margin:14px 0 26px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-1px;padding:14px 2px 11px;font:600 13.5px var(--f);color:var(--slate);cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--navy)}
+.tab.on{color:var(--navy);border-bottom-color:var(--gold);font-weight:700}
+
+/* Bases */
+.hero{background:var(--cream);border:1px solid #ead9b8;border-radius:16px;padding:26px 28px 24px;margin-bottom:10px}
+.hero .eyebrow{font-size:11px;letter-spacing:.18em;color:var(--gold-d);font-weight:700}
+.hero h2{font-size:18px;margin:6px 0 10px}
+.hero .lead{font-size:13.5px;margin:0 0 6px}
+.hero .lead2{margin:0 0 18px;color:var(--slate);font-size:12px}
+.flow{display:flex;flex-wrap:wrap;gap:8px 6px;align-items:center}
+.step{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e3cfa6;border-radius:999px;padding:5px 12px 5px 5px;font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--navy)}
+.step i{font-style:normal;width:24px;height:24px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:11px}
+.arr{color:var(--gold);font-size:18px;font-weight:700}
+.sec{font-size:18px;margin:34px 0 14px;padding-left:12px;border-left:5px solid var(--gold)}
+.grid{display:grid;gap:14px}
+.g3{grid-template-columns:repeat(auto-fill,minmax(310px,1fr))}
+.pc{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:12px;padding:16px 18px 16px;box-shadow:0 1px 3px rgba(32,52,71,.05)}
+.pc .num{width:28px;height:28px;border-radius:8px;background:var(--navy);color:var(--gold);font-weight:700;display:grid;place-items:center;font-size:11px;margin-bottom:8px}
+.pc h4{font-size:12px;letter-spacing:.04em;margin-bottom:6px}
+.pc p{margin:0;font-size:13.5px;color:#33475a}
+.pre{white-space:pre-line}
+
+/* Llamada: una sección por diapositiva */
+.slide{margin:0 0 34px}
+.sh{display:flex;align-items:center;gap:12px;margin:0 0 14px;scroll-margin-top:70px}
+.sh .sn{flex:none;font-size:12px;width:32px;height:32px;border-radius:9px;background:var(--navy);color:var(--gold);font-weight:800;display:grid;place-items:center}
+.sh h2{font-size:18px}
+.sh p{margin:0;color:var(--slate);font-size:12px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
+.cols2s{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+.cols2c{display:grid;grid-template-columns:1fr 1.5fr;gap:14px;align-items:stretch}
+.cols3w{display:grid;grid-template-columns:1.15fr 1.15fr .85fr;gap:14px;align-items:stretch}
+.stk{display:flex;flex-direction:column;gap:14px}
+.stk>.mc{flex:1 1 auto}
+.decrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+.two.even{grid-template-columns:1.3fr 1fr}
+.mc{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:12px;padding:14px 14px 6px;box-shadow:0 1px 3px rgba(32,52,71,.05)}
+.mh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.mh h3{font-size:11px;letter-spacing:.07em}
+.mn{flex:none;width:26px;height:26px;border-radius:7px;background:var(--navy);color:var(--gold);font-weight:700;display:grid;place-items:center;font-size:11px}
+.gb{background:#f1f5f7;border-left:5px solid var(--navy);border-radius:0 10px 10px 0;padding:9px 13px 11px;margin:0 0 10px}
+.gb .gl{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#fff;background:var(--navy);border-radius:5px;padding:2px 8px;margin-bottom:5px}
+.gb .gt{font-size:13.5px;line-height:1.5;white-space:pre-line}
+.gb.pre{border-left-color:var(--teal);background:var(--tealsoft)}.gb.pre .gl{background:var(--teal)}
+.gb.alt{border-left-color:var(--gold);background:var(--cream)}.gb.alt .gl{background:var(--gold-d)}
+.silence{margin:0 0 10px;text-align:center;font-weight:800;letter-spacing:.3em;color:var(--gold-d);background:var(--cream);border:2px dashed var(--gold);border-radius:10px;padding:6px;font-size:11px}
+.dec{display:grid;gap:10px}
+.dq{font-weight:800;font-size:13.5px;text-align:center}
+.dt{border-radius:12px;padding:12px 14px;display:grid;gap:2px;font-size:13.5px}
+.dt b{font-size:18px}
+.dt.yes{background:var(--tealsoft);border:1px solid #b9d8d3}.dt.yes b{color:var(--teal)}
+.dt.no{background:var(--cream);border:1px solid #e3cfa6}.dt.no b{color:var(--gold-d)}
+.dt a{color:var(--teal);font-weight:700}
+ol.gq{list-style:none;counter-reset:q;margin:0 0 10px;padding:0;display:grid;gap:6px}
+ol.gq li{counter-increment:q;background:var(--tealsoft);border-left:5px solid var(--teal);border-radius:0 10px 10px 0;padding:7px 10px 8px 42px;font-size:13.5px;line-height:1.45;position:relative}
+ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23px;height:23px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;display:grid;place-items:center;font-size:11px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.fact{background:var(--cream);border:1px solid #ead9b8;border-radius:12px;padding:12px 14px}
+.fact b{font-size:11px;letter-spacing:.08em;color:var(--gold-d)}
+.fact p{margin:4px 0 0}
+
+/* Seguimiento: cada situación en su propio bloque */
+.blk{border-radius:16px;padding:20px 20px 8px;margin:0 0 32px;border:1px solid var(--line)}
+.blk1{background:var(--tealsoft);border-color:#c5ddd8}
+.blk2{background:var(--cream);border-color:#ead9b8}
+.blk3{background:#eef2f5}
+.blk .two>div>.gb{background:#fff}
+.dt.yes{background:#fff}
+.blk .sh{padding-bottom:12px;margin-bottom:16px;border-bottom:2px solid rgba(32,52,71,.1)}
+.blk1 .sn{background:var(--teal);color:#fff}
+.blk2 .sn{background:var(--gold-d);color:#fff}
+.msgs{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px 6px;box-shadow:0 1px 3px rgba(32,52,71,.06)}
+.card>h3{font-size:11px;letter-spacing:.07em;margin-bottom:10px}
+.msg{position:relative;border-radius:10px;padding:12px 14px 46px;margin:0 0 10px;white-space:pre-line;background:#fff;border:1px solid #cbd8df;border-left:4px solid var(--navy)}
+.msg.wa{border-left-color:var(--teal)}
+.msg.mail{border-left-color:var(--gold)}
+.msg .subj{white-space:normal;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px}
+.msg .subj .cp{position:static;display:block;margin-top:8px}
+.cp{position:absolute;right:10px;bottom:9px;border:1px solid var(--teal);background:#fff;border-radius:8px;padding:5px 12px;font:600 11px var(--f);color:var(--teal);cursor:pointer}
+.cp:hover{background:var(--tealsoft)}
+.cp.done{background:var(--teal);color:#fff}
+.v{background:var(--cream2);border-radius:3px;padding:0 1px}
+[hidden]{display:none!important}
+@media(max-width:1000px){.cols3{grid-template-columns:repeat(2,1fr)}.msgs{grid-template-columns:1fr}}
+@media(max-width:900px){.cols2s,.cols2c,.cols3w,.decrow{grid-template-columns:1fr}}
+@media(max-width:700px){.cols3,.two,.two.even,.facts{grid-template-columns:1fr}.tabs{gap:18px}}
+</style>
 </head>
 <body>
-  <div class="topline"></div>
-  <main class="shell">
-    <header class="intro">
-      <div>
-        <div class="kicker">Herramienta de comunicación</div>
-        <h1>Mensajes para tus gestiones</h1>
-        <p>Textos listos para copiar y pegar. Incluye tus mensajes originales y los cinco seguimientos en versiones para correo y WhatsApp.</p>
-      </div>
-      <div class="brand">Arquitectas de Autores<span>Guía de mensajes</span></div>
-    </header>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">ARQUITECTAS DE AUTORES / SISTEMA COMERCIAL</div>
+    <h1>Protocolo de ventas</h1>
+    <p>Completa los datos del cliente y todo el texto se ajusta solo. La llamada es una guía para leer; los mensajes de WhatsApp y correo se copian con su botón.</p>
+  </header>
 
-    <section class="toolbar" aria-label="Personalizar y elegir mensajes">
-      <div class="name-control">
-        <label for="contactName">Nombre de la persona</label>
-        <input id="contactName" type="text" autocomplete="off" placeholder="Escribe el nombre aquí" aria-describedby="nameHint">
-        <div class="hint" id="nameHint">Si dejas el campo vacío, el mensaje conservará «Hola, ( )».</div>
-      </div>
-      <div class="toolbar-right">
-        <label>Tipo de mensaje</label>
-        <div class="tabs" role="tablist" aria-label="Elegir tipo de mensaje">
-          <button type="button" class="tab active" data-tab="originales" role="tab" aria-selected="true">Originales</button>
-          <button type="button" class="tab" data-tab="seguimientos" role="tab" aria-selected="false">Correos (5)</button>
-          <button type="button" class="tab" data-tab="whatsapp" role="tab" aria-selected="false">WhatsApp (5)</button>
-        </div>
-      </div>
-    </section>
+  <section class="ctrl" aria-label="Datos del cliente">
+    <div class="fld"><label for="f-nombre">Nombre del cliente</label><input type="text" id="f-nombre" placeholder="Ej.: Teresa" autocomplete="off"></div>
+    <div class="fld"><span class="lbl">Sexo</span><div class="seg" role="radiogroup" aria-label="Sexo">
+      <label><input type="radio" name="sexo" value="F" checked><span>Mujer</span></label>
+      <label><input type="radio" name="sexo" value="M"><span>Hombre</span></label></div></div>
+    <div class="fld"><span class="lbl">Tú / Usted</span><div class="seg" role="radiogroup" aria-label="Trato">
+      <label><input type="radio" name="trato" value="U" checked><span>Usted</span></label>
+      <label><input type="radio" name="trato" value="T"><span>Tú</span></label></div></div>
+    <div class="fld"><label for="f-fecha">Inicio del programa</label><input type="date" id="f-fecha" value="2026-12-04"></div>
+    <div class="fld"><label for="f-arq">Arquitecta</label><select id="f-arq"><option>Jaqueline Rincón</option><option selected>Consuelo Alarcón</option></select></div>
+    <p class="hint">La fecha de publicación objetivo se calcula sola: 93 días después del inicio (del 4 de diciembre de 2026 al 7 de marzo de 2027).</p>
+  </section>
 
-    <nav class="gender-nav" id="genderNav" aria-label="Elegir destinatario">
-      <span class="gender-label">Mostrar:</span>
-      <button type="button" class="gender-btn active" data-gender="ambos">Ambos</button>
-      <button type="button" class="gender-btn" data-gender="mujer">Mujeres</button>
-      <button type="button" class="gender-btn" data-gender="hombre">Hombres</button>
-    </nav>
+  <nav class="tabs" role="tablist">
+    <button class="tab on" role="tab" data-tab="bases" aria-selected="true">Las bases del protocolo</button>
+    <button class="tab" role="tab" data-tab="llamada" aria-selected="false">La llamada</button>
+    <button class="tab" role="tab" data-tab="wa" aria-selected="false">Seguimiento por WhatsApp</button>
+    <button class="tab" role="tab" data-tab="correo" aria-selected="false">Seguimiento por correo</button>
+  </nav>
 
-    <section class="section-heading" aria-live="polite">
-      <div>
-        <h2 id="sectionTitle">Mensajes originales</h2>
-        <p id="sectionDescription">Versiones para mujeres y hombres, con los colores de tu hoja de cálculo.</p>
-      </div>
-      <div class="count" id="count"></div>
-    </section>
-
-    <section class="cards" id="messageCards" aria-label="Mensajes disponibles"></section>
-    <footer class="footnote"><strong>Arquitectas de Autores</strong> · Elige el canal, copia el texto y pégalo donde lo necesites. Los asuntos de correo se copian por separado.</footer>
+  <main>
+    <div class="panel" data-panel="bases"></div>
+    <div class="panel" data-panel="llamada" hidden></div>
+    <div class="panel" data-panel="wa" hidden></div>
+    <div class="panel" data-panel="correo" hidden></div>
   </main>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <script>
-    'use strict';
-
-    // Contenido original de «Mensajes WhatApp». La única adaptación general es
-    // el saludo solicitado: «Hola, ( )», personalizable con el campo superior.
-    const originales = [
-      {
-        id: 'llamada-mujer', gender: 'mujer', title: 'Contacto · llamada telefónica',
-        body: `Hola, ( )
-
-Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
-
-Hace poco usted se registró en nuestra página porque estaba *interesada en que le ayudemos con el libro que desea escribir*. Nosotras estaremos encantadas de guiarla.
-
-*Dígame, ¿es buen momento para conversar ahora?*
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'llamada-hombre', gender: 'hombre', title: 'Contacto · llamada telefónica',
-        body: `Hola, ( )
-
-Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
-
-Hace poco usted se registró en nuestra página porque estaba *interesado en que le ayudemos con el libro que desea escribir*. Nosotras estaremos encantadas de guiarlo.
-
-*Dígame, ¿es buen momento para conversar ahora?*
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'primer-mujer', gender: 'mujer', title: 'Primer mensaje de WhatsApp',
-        body: `Hola, ( )
-
-Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
-
-*¡Claro que podemos ayudarla!*
-
-Precisamente nos dedicamos a acompañar a personas que desean *transformar sus conocimientos o experiencias en un libro publicado* y no tienen claro por dónde empezar.
-
-*¿A qué hora tiene unos minutos libres?* Me gustaría llamarla para conocer un poco más sobre su proyecto y orientarla mejor.
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'primer-hombre', gender: 'hombre', title: 'Primer mensaje de WhatsApp',
-        body: `Hola, ( )
-
-Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
-
-*¡Claro que podemos ayudarlo!*
-
-Precisamente nos dedicamos a acompañar a personas que desean *transformar sus conocimientos o experiencias en un libro publicado* y que no tienen claro por dónde empezar.
-
-*¿A qué hora tiene unos minutos libres?* Me gustaría llamarlo para conocer un poco más sobre su proyecto y orientarlo mejor.
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'segundo-mujer', gender: 'mujer', title: 'Segundo mensaje de WhatsApp',
-        body: `Hola, ( )
-
-Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
-
-Hace poco usted se registró en nuestra página porque estaba *interesada en escribir un libro*. Nosotras estaremos encantadas de guiarla.
-
-Intenté comunicarme con usted por teléfono, pero no tuve éxito. Me gustaría conocer *qué libro tiene en mente* y conversar sobre *cómo podemos sacarlo adelante*.
-
-*¿A qué hora se encuentra libre para conversar al respecto?*
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'segundo-hombre', gender: 'hombre', title: 'Segundo mensaje de WhatsApp',
-        body: `Hola, ( )
-
-Soy Consuelo Alarcón, fundadora de Arquitectas de Autores Publicados.
-
-Hace poco usted se registró en nuestra página porque estaba *interesado en escribir un libro*. Nosotras estaremos encantadas de guiarlo.
-
-Intenté comunicarme con usted por teléfono, pero no tuve éxito. Me gustaría conocer *qué libro tiene en mente* y conversar sobre *cómo podemos sacarlo adelante*.
-
-*¿A qué hora se encuentra libre para conversar al respecto?*
-
-💪🏼 📖 💖`
-      }
-    ];
-
-    // Los cinco textos aprobados se mantienen completos, con asuntos separados.
-    // Los asteriscos simples reproducen las negritas al pegar en WhatsApp.
-    const seguimientos = [
-      {
-        id: 'seguimiento-1', title: '1. Escribir su libro sí es posible',
-        focus: 'Recuperar la ilusión', subject: 'Escribir su libro sí es posible',
-        body: `Hola, ( )
-
-*Nadie debería renunciar a escribir su libro solo por creer que es un sueño imposible.*
-
-Muchas personas tienen conocimientos, experiencias e historias valiosas que compartir, pero no saben cómo convertirlas en un libro.
-
-Precisamente en eso podemos ayudarle.
-
-En Arquitectas de Autores acompañamos a personas que desean escribir y publicar su libro, incluso si todavía no tienen claro por dónde empezar.
-
-Me gustaría conocer qué libro tiene en mente y explicarle cómo podemos sacarlo adelante.
-
-💪🏼 📖 💖
-
-Consuelo Alarcón
-*Arquitectas de Autores*
-WhatsApp: 912 085 728`
-      },
-      {
-        id: 'seguimiento-2', title: '2. Lo que usted sabe puede ayudar a otros',
-        focus: 'El valor de compartir', subject: 'Lo que usted sabe puede ayudar a otros',
-        body: `Hola, ( )
-
-*Su historia puede ayudar a alguien. Sus conocimientos y experiencias también.*
-
-A veces no somos conscientes de cuánto podemos aportar a otras personas con lo que hemos aprendido a lo largo de nuestra vida.
-
-Un libro permite compartir ese conocimiento, llegar a más personas y dejar algo valioso para quienes vienen detrás.
-
-*Nosotras podemos ayudarle a convertir todo eso en un libro publicado.*
-
-No necesita experiencia previa escribiendo libros. Lo más importante ya lo tiene: sus conocimientos y experiencias.
-
-💪🏼 📖 💖
-
-Consuelo Alarcón
-*Arquitectas de Autores*
-WhatsApp: 912 085 728`
-      },
-      {
-        id: 'seguimiento-3', title: '3. No siga postergando su libro',
-        focus: 'Dar el primer paso', subject: '¿Cuánto tiempo lleva pensando en escribir su libro?',
-        body: `Hola, ( )
-
-*Si su sueño es escribir un libro, le invito a no seguir postergándolo.*
-
-Muchas personas pasan años pensando en escribir, esperando tener más tiempo, más conocimientos o las condiciones perfectas para empezar.
-
-Pero escribir un libro no tiene por qué ser un proceso complicado cuando se cuenta con una metodología y el acompañamiento adecuado.
-
-En *La Incubadora de mi Libro* le enseñamos cómo transformar sus conocimientos o experiencias en un libro, paso a paso, hasta su publicación.
-
-No necesita tenerlo todo resuelto para comenzar.
-
-💪🏼 📖 💖
-
-Consuelo Alarcón
-*Arquitectas de Autores*
-WhatsApp: 912 085 728`
-      },
-      {
-        id: 'seguimiento-5', title: '4. ¿Realmente es falta de tiempo?',
-        focus: 'Superar la objeción del tiempo', subject: '¿Realmente es falta de tiempo?',
-        body: `Hola, ( )
-
-Muchas veces decimos que no tenemos tiempo para escribir un libro.
-
-*Pero ¿es realmente la falta de tiempo lo que nos detiene?*
-
-En muchos casos, lo que necesitamos es una ruta clara, una metodología y el acompañamiento adecuado para avanzar.
-
-Precisamente por eso, *La Incubadora de mi Libro está diseñada para que pueda escribir su libro en 12 semanas*, con actividades organizadas para que avance paso a paso, sin dejar de atender sus responsabilidades diarias.
-
-No necesita esperar a tener más tiempo. Necesita aprender a aprovechar el que ya tiene.
-
-*Le invito a no seguir postergando su sueño de escribir un libro.*
-
-💪🏼 📖 💖
-
-Consuelo Alarcón
-*Arquitectas de Autores*
-WhatsApp: 912 085 728`
-      },
-      {
-        id: 'seguimiento-4', title: '5. Nuestro programa empieza pronto',
-        focus: 'Invitación al próximo inicio', subject: 'Su libro puede comenzar a hacerse realidad',
-        body: `Hola, ( )
-
-*Nuestro programa La Incubadora de mi Libro empieza pronto.*
-
-Durante 12 semanas le acompañaremos en un recorrido para convertir sus conocimientos o experiencias en un libro publicado.
-
-Descubrirá qué quiere transmitir, aprenderá a organizar y escribir su contenido, mejorará su manuscrito y conocerá el proceso para publicarlo.
-
-Todo con una metodología clara y nuestro acompañamiento en cada etapa.
-
-*Si escribir un libro está entre sus proyectos, esta puede ser la oportunidad de hacerlo realidad.*
-
-¿Le gustaría conocer cómo funciona el programa y qué necesita para comenzar?
-
-💪🏼 📖 💖
-
-Consuelo Alarcón
-*Arquitectas de Autores*
-WhatsApp: 912 085 728`
-      }
-    ];
-
-    // Versiones breves y naturales de los mismos cinco temas para chat de WhatsApp.
-    // No requieren variantes por género: el trato de «usted» es válido para ambos.
-    const whatsappSeguimiento = [
-      {
-        id: 'whatsapp-1', title: '1. Escribir su libro sí es posible',
-        focus: 'El sueño de escribir un libro',
-        body: `Hola, ( )
-
-*Nadie debería renunciar a escribir su libro solo por creer que es un sueño imposible.*
-
-Si tiene conocimientos o experiencias que desea compartir, ya tiene lo más importante para empezar. Nosotras podemos ayudarle a organizar ese material y convertirlo en un libro publicado.
-
-Dígame, ¿qué libro tiene en mente?
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'whatsapp-2', title: '2. Lo que tiene para compartir',
-        focus: 'El valor de su experiencia',
-        body: `Hola, ( )
-
-*Su historia puede ayudar a alguien.* Sus conocimientos y experiencias también.
-
-Lo que ha aprendido puede ser útil para otras personas. En Arquitectas de Autores le ayudamos a organizar ese contenido y convertirlo en un libro.
-
-¿Qué le gustaría transmitir a través del suyo?
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'whatsapp-3', title: '3. No siga postergando su libro',
-        focus: 'Dar el primer paso',
-        body: `Hola, ( )
-
-*Si su sueño es escribir un libro, le invito a no seguir postergándolo.*
-
-No necesita experiencia previa escribiendo libros ni tenerlo todo resuelto. Con una metodología y acompañamiento puede avanzar paso a paso, desde la idea hasta la publicación.
-
-Precisamente para eso está La Incubadora de mi Libro.
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'whatsapp-4', title: '4. ¿Realmente es falta de tiempo?',
-        focus: 'El tiempo para escribir',
-        body: `Hola, ( )
-
-Muchas veces decimos que no tenemos tiempo para escribir un libro. *Pero ¿es realmente la falta de tiempo lo que nos detiene?*
-
-La Incubadora de mi Libro está organizada para que pueda escribir su libro en 12 semanas, avanzando paso a paso sin dejar de lado sus actividades diarias.
-
-*Le invito a no seguir postergando ese proyecto.*
-
-💪🏼 📖 💖`
-      },
-      {
-        id: 'whatsapp-5', title: '5. Nuestro programa empieza pronto',
-        focus: 'Próximo inicio de la Incubadora',
-        body: `Hola, ( )
-
-*Nuestro programa La Incubadora de mi Libro empieza pronto.*
-
-Durante 12 semanas le acompañamos para definir qué quiere transmitir, escribir su manuscrito, mejorarlo y prepararlo para su publicación.
-
-Si desea conocer los horarios y cómo participar, podemos compartirle la información.
-
-💪🏼 📖 💖`
-      }
-    ];
-
-    let activeTab = 'originales';
-    let activeGender = 'ambos';
-    let toastTimer;
-
-    const cardsEl = document.getElementById('messageCards');
-    const nameEl = document.getElementById('contactName');
-    const toastEl = document.getElementById('toast');
-
-    function personalized(body) {
-      const name = nameEl.value.trim().replace(/\s+/g, ' ');
-      return name ? body.replace(/^Hola, \( \)/, `Hola, ${name}`) : body;
-    }
-
-    function escapeHtml(value) {
-      return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    function formattedPreview(message) {
-      return escapeHtml(personalized(message)).replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>');
-    }
-
-    function showToast(message) {
-      clearTimeout(toastTimer);
-      toastEl.textContent = message;
-      toastEl.classList.add('show');
-      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2300);
-    }
-
-    async function copyText(value) {
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(value);
-          return true;
-        }
-      } catch (_) { /* Intentar el método compatible con archivos locales. */ }
-
-      const temp = document.createElement('textarea');
-      temp.value = value;
-      temp.setAttribute('readonly', '');
-      temp.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
-      document.body.appendChild(temp);
-      temp.focus();
-      temp.select();
-      let ok = false;
-      try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
-      temp.remove();
-      return ok;
-    }
-
-    function makeCard(item) {
-      const email = activeTab === 'seguimientos';
-      const whatsapp = activeTab === 'whatsapp';
-      const card = document.createElement('article');
-      const category = email ? 'email' : (whatsapp ? 'whatsapp' : (item.gender === 'mujer' ? 'female' : 'male'));
-      card.className = `card ${category}`;
-
-      const head = document.createElement('div');
-      head.className = 'card-head';
-      const headInfo = document.createElement('div');
-      const title = document.createElement('div');
-      title.className = 'card-title';
-      title.textContent = item.title;
-      const sub = document.createElement('div');
-      sub.className = 'card-subtitle';
-      sub.textContent = (email || whatsapp) ? item.focus : (item.title.includes('llamada') ? 'Guion para conversación telefónica' : 'Listo para WhatsApp');
-      headInfo.append(title, sub);
-      const chip = document.createElement('span');
-      chip.className = 'chip';
-      chip.textContent = email ? 'Correo' : (whatsapp ? 'WhatsApp' : (item.gender === 'mujer' ? 'Mujer' : 'Hombre'));
-      head.append(headInfo, chip);
-
-      const body = document.createElement('div');
-      body.className = 'card-body';
-      if (email) {
-        const subject = document.createElement('div');
-        subject.className = 'subject';
-        const subjectText = document.createElement('div');
-        subjectText.className = 'subject-text';
-        const subjectLabel = document.createElement('strong');
-        subjectLabel.textContent = 'Asunto del correo';
-        const subjectValue = document.createElement('span');
-        subjectValue.textContent = item.subject;
-        subjectText.append(subjectLabel, subjectValue);
-        const subjectCopy = document.createElement('button');
-        subjectCopy.type = 'button';
-        subjectCopy.className = 'small-copy';
-        subjectCopy.textContent = 'Copiar asunto';
-        subjectCopy.addEventListener('click', async () => {
-          const ok = await copyText(item.subject);
-          showToast(ok ? 'Asunto copiado' : 'Selecciona el asunto para copiarlo');
-        });
-        subject.append(subjectText, subjectCopy);
-        body.appendChild(subject);
-      }
-
-      const preview = document.createElement('p');
-      preview.className = 'preview';
-      preview.innerHTML = formattedPreview(item.body);
-      body.appendChild(preview);
-
-      const footer = document.createElement('div');
-      footer.className = 'card-footer';
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'copy';
-      button.textContent = 'COPIAR MENSAJE';
-      button.setAttribute('aria-label', `Copiar ${item.title}`);
-      button.addEventListener('click', async () => {
-        const ok = await copyText(personalized(item.body));
-        if (ok) {
-          button.textContent = '✓ ¡COPIADO!';
-          button.classList.add('copied');
-          showToast('Texto listo para pegar');
-          setTimeout(() => { button.textContent = 'COPIAR MENSAJE'; button.classList.remove('copied'); }, 2000);
-        } else {
-          showToast('No se pudo copiar automáticamente');
-        }
+</div>
+<script>
+/* ===== Motor de personalización ===== */
+const MES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const S = { nombre: '', sexo: 'F', trato: 'U', fecha: '2026-12-04', arq: 'Consuelo Alarcón' };
+const TPL = [];
+const V = s => '\u0001' + s + '\u0002';
+
+function parseD(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+  return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null;
+}
+function fmtD(d, y) {
+  return d.getUTCDate() + ' de ' + MES[d.getUTCMonth()] + (y ? ' de ' + d.getUTCFullYear() : '');
+}
+function tokens() {
+  const f = S.sexo === 'F', u = S.trato === 'U';
+  const nom = (S.nombre || '').trim() || '[Nombre]';
+  const ini = parseD(S.fecha);
+  const pub = ini ? new Date(ini.getTime() + 93 * 86400000) : null;
+  const sr = (f ? 'señora ' : 'señor ') + nom;
+  return {
+    n: V(nom),
+    arq: V(S.arq),
+    ini: V(ini ? fmtD(ini, false) : '[fecha de inicio]'),
+    iniY: V(ini ? fmtD(ini, true) : '[fecha de inicio]'),
+    pub: V(pub ? fmtD(pub, false) : '[fecha de publicación]'),
+    pubY: V(pub ? fmtD(pub, true) : '[fecha de publicación]'),
+    lo: u ? (f ? 'la' : 'lo') : 'te',
+    Lo: u ? (f ? 'La' : 'Lo') : 'Te',
+    le: u ? 'le' : 'te',
+    su: u ? 'su' : 'tu',
+    sus: u ? 'sus' : 'tus',
+    usted: u ? 'usted' : 'tú',
+    Usted: u ? 'Usted' : 'Tú',
+    ti: u ? 'usted' : 'ti',
+    con: u ? 'con usted' : 'contigo',
+    sr: u ? V(sr) : V(nom),
+    Sr: u ? V(sr.charAt(0).toUpperCase() + sr.slice(1)) : V(nom)
+  };
+}
+function render(tpl) {
+  const f = S.sexo === 'F', u = S.trato === 'U', tk = tokens();
+  let t = tpl.replace(/\{(\w+)\}/g, (m, k) => (k in tk ? tk[k] : m));
+  t = t.replace(/\{G:([^|{}]*)\|([^{}]*)\}/g, (m, a, b) => (f ? b : a));
+  t = t.replace(/\{U:([^|{}]*)\|([^{}]*)\}/g, (m, a, b) => (u ? a : b));
+  return t;
+}
+const plain = tpl => render(tpl).replace(/[\u0001\u0002]/g, '');
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const html = tpl => esc(render(tpl)).replace(/\u0001/g, '<span class="v">').replace(/\u0002/g, '</span>');
+
+/* ===== Constructores de HTML ===== */
+function reg(tpl) { TPL.push(tpl); return TPL.length - 1; }
+const T = (tpl, tag = 'span', cls = '') => `<${tag} class="${cls}" data-i="${reg(tpl)}"></${tag}>`;
+/* Un salto de línea simple pasa a línea en blanco (párrafos); la firma queda junta. */
+const P = t => t.replace(/(?<!\n)\n(?!\n)(?!Arquitectas de Autores Publicados)/g, '\n\n');
+const wa = tpl =>
+  `<div class="msg wa"><div class="txt" data-i="${reg(P(tpl))}"></div><button class="cp" data-copy="wa">Copiar para WhatsApp</button></div>`;
+const mail = (subj, body) => {
+  const si = reg(subj), bi = reg(P(body));
+  return `<div class="msg mail"><div class="subj"><b>Asunto:</b> <span class="txt" data-i="${si}"></span><button class="cp" data-copy="subj">Copiar asunto</button></div><div class="txt" data-i="${bi}"></div><button class="cp" data-copy="mail">Copiar correo</button></div>`;
+};
+const card = (title, inner, cls = '') => `<section class="card ${cls}"><h3>${title}</h3>${inner}</section>`;
+
+/* ===== Pestaña 1 · Las bases ===== */
+function buildBases() {
+  const flow = ['NUEVO LEAD', 'LLAMADA', 'DIAGNÓSTICO', 'RECOMENDACIÓN', 'OFERTA', 'DECISIÓN', 'SEGUIMIENTO DÍA 1, 2, 5 Y 7'];
+  const princ = [
+    ['NO VENDER DESDE LA ANSIEDAD NI LA NECESIDAD', 'No ruegue, no se justifique, no se disculpe por su tiempo. Usted está para ayudar.\nHable con convicción, con la seguridad de quien conoce el valor de su propuesta.'],
+    ['PREGUNTAR ANTES DE EXPLICAR', 'Quien pregunta conduce la negociación. No recite el programa hasta saber qué necesita. Pregunte.'],
+    ['ESCUCHAR Y DEVOLVER LO ESCUCHADO', 'Repita con sus palabras lo que entendió de las respuestas del cliente: qué {G:lo|la} frena y qué ya intentó. Que se sienta comprendid{G:o|a}.'],
+    ['QUE {G:ÉL|ELLA} CALCULE EL COSTO DE ESPERAR', 'Sin descuentos ni plazos inventados. Pregunte y calle.'],
+    ['UN SOLO CAMINO Y EL PRECIO EXACTO', 'Recomiende una opción, confirme que es lo que busca, diga el precio y calle.'],
+    ['AYUDAR{G:LO|LA} A CREER QUE SÍ PUEDE', 'Detrás del «lo voy a pensar» casi siempre hay una creencia que {G:lo|la} frena. Encuéntrela. Ayúde{G:lo|la} a verla y a vencerla.'],
+    ['CERRAR CON DÍA Y HORA', 'Dos alternativas concretas. Ninguna conversación termina en «avísame».'],
+    ['ANTE UNA OBJECIÓN, HALLE LA DUDA REAL', 'Siga preguntando hasta encontrar la verdadera razón.'],
+    ['SEGUIR SIN PERSEGUIR', 'Mantenga la iniciativa comercial sin transmitir necesidad de vender. Si después de varios intentos no obtiene respuesta, cierre el seguimiento con profesionalismo.']
+  ];
+  const core = [
+    ['SU SUEÑO ES REAL', 'Quien llega quiere escribir su libro y viene ilusionad{G:o|a}. Lo que {G:lo|la} frena casi nunca es el programa ni el precio.'],
+    ['LO QUE DE VERDAD {G:LO|LA} FRENA', 'Una creencia: «no soy capaz», «no es para mí». Pregunte por ella: «¿Qué voz {le} dice que no {U:puede|puedes}?»'],
+    ['NUESTRA CONVICCIÓN', '«Yo sé que {U:usted puede|tú puedes}. Conozco el camino y no {lo} voy a dejar {G:solo|sola} en él.»'],
+    ['EL RESPALDO', 'La metodología no nace con nosotras: otros autores la usan hace años y cientos de personas han escrito su libro con ella.'],
+    ['LO QUE NOS DIFERENCIA', 'El libro lo escribe el autor, con una metodología probada y efectiva, bajo un trabajo guiado. En el Perú no conocemos otra igual.'],
+    ['NUESTRO COMPROMISO', 'Acompañar{G:lo|la} paso a paso hasta que publique su libro.']
+  ];
+  const grid = (arr, cls) => `<div class="grid ${cls}">${arr.map((p, i) => `<article class="pc"><div class="num">${i + 1}</div><h4>${T(p[0], 'span')}</h4><p class="pre">${T(p[1], 'span')}</p></article>`).join('')}</div>`;
+  return `
+    <section class="hero">
+      <div class="eyebrow">ARQUITECTAS DE AUTORES / SISTEMA COMERCIAL</div>
+      <h2>Flujo de ventas de Arquitectas de Autores</h2>
+      <p class="lead">${T('Tu cliente tiene un sueño: escribir y publicar su libro. Tú tienes la metodología, la experiencia y el acompañamiento para ayudar{G:lo|la} a hacerlo realidad.')}</p>
+      <p class="lead2">No negocies desde la necesidad ni pongas en duda el valor de lo que ofreces. Tu objetivo es que el cliente comprenda que tienes la solución que necesita para alcanzar su meta.</p>
+      <div class="flow">${flow.map((s, i) => `<span class="step">${s}</span>${i < flow.length - 1 ? '<span class="arr">›</span>' : ''}`).join('')}</div>
+    </section>
+    <h2 class="sec">Principios rectores del flujo de ventas</h2>
+    ${grid(princ, 'g3')}
+    <h2 class="sec">El corazón de nuestra oferta</h2>
+    ${grid(core, 'g3')}`;
+}
+
+/* ===== Pestaña 2 · La llamada: guía en pantalla, una sección por diapositiva, sin botones ===== */
+const gb = (tpl, label, kind = 'di') => `<div class="gb ${kind}"><span class="gl">${label}</span><div class="gt" data-i="${reg(tpl)}"></div></div>`;
+const gq = arr => `<ol class="gq">${arr.map(q => `<li data-i="${reg(q)}"></li>`).join('')}</ol>`;
+const silence = '<div class="silence">SILENCIO</div>';
+const mc = (title, inner, num) => `<article class="mc">${num ? `<div class="mh"><span class="mn">${num}</span><h3>${title}</h3></div>` : `<div class="mh"><h3>${title}</h3></div>`}${inner}</article>`;
+const slide = (n, title, sub, inner) => `<section class="blk blk${((n - 1) % 3) + 1}"><div class="sh"><span class="sn">${n}</span><div><h2>${title}</h2><p>${sub}</p></div></div>${inner}</section>`;
+
+function buildLlamada() {
+  /* Diapositiva 4 · Apertura */
+  const apertura = slide(1, 'Apertura de la llamada', 'Llamada – Lo más pronto posible desde que se recibe el lead', `
+    ${mc('APERTURA', gb('«Buenas tardes, {n}. ¡Qué gusto saludar{lo}!\nAntes que nada, felicitaciones por el libro que está pensando escribir. {Lo} llamo precisamente porque {U:usted nos solicitó|tú nos solicitaste} información al respecto y con mucho gusto podemos ayudar{lo}.\nSoy {arq}, de Arquitectas de Autores. {U:Dígame|Dime}, ¿podemos conversar en este momento?»', 'Di') + gb('«Por supuesto, {n}. ¿{U:Prefiere|Prefieres} que {lo} llame hoy por la tarde o mañana por la mañana?»', 'Si no puede', 'alt'))}
+    <div style="height:14px"></div>
+    <div class="mc"><div class="mh"><h3>¿CONTESTÓ?</h3></div>
+      <div class="decrow">
+        <div class="dt yes"><b>Sí</b><span>→ Diagnóstico</span></div>
+        <div class="dt no"><b>No</b><span>→ Dejar sonar, sin mensaje de voz, y enviar el <a href="#" data-go="wa|wa-nunca">WhatsApp 1</a> en menos de 2 minutos</span></div>
+      </div></div>`);
+
+  /* Diapositiva 5 · Los seis momentos */
+  const seis = slide(2, 'Los seis momentos', 'Llamada – Los seis momentos', `<div class="cols2s"><div class="stk">
+    ${mc('ENCUADRE', gb('«Con gusto, {n}. Antes de explicar{le} el programa, quiero hacer{le} algunas preguntas para conocer mejor {su} proyecto y entender qué {U:necesita|necesitas}. Así podré orientar{lo} y explicar{le} cómo podemos ayudar{lo}.»', 'Di'), 1)}
+    ${mc('DIAGNÓSTICO', gq([
+      '¿Sobre qué {U:le gustaría|te gustaría} escribir y qué {U:quiere|quieres} conseguir con ese libro?',
+      '¿Desde hace cuánto tiempo {U:tiene|tienes} la ilusión de escribirlo?',
+      '¿Qué {lo} ha motivado a buscar ayuda precisamente ahora?',
+      '¿{U:Ha intentado|Has intentado} escribirlo anteriormente? ¿Qué {le} ha impedido avanzar? ¿Cuál ha sido {su} mayor obstáculo?',
+      '¿Qué es lo que más {le} preocupa del proceso?',
+      '¿Cuánto tiempo {U:podría|podrías} dedicar semanalmente a desarrollar {su} libro?',
+      '¿Qué tan familiariz{G:ado|ada} {U:está|estás} con el uso de la computadora y las herramientas digitales?'
+    ]), 2)}
+    ${mc('RESUMIR', gb('«{n}, por lo que me {U:ha contado|has contado}, {U:lleva|llevas} varios años con la ilusión de escribir {su} libro. {U:Tiene|Tienes} la intención de ayudar a otros a partir de {sus} vivencias, {U:quiere|quieres} dejar un legado, pero todavía no {U:ha encontrado|has encontrado} la manera de organizar {sus} ideas y avanzar. ¿Es así?»', 'Di · ejemplo, adáptalo a lo que contó'), 3)}
+  </div><div class="stk">
+    ${mc('RECOMENDAR', gb('{n}, por lo que me {U:ha contado|has contado}, estoy convencida de que podemos ayudar{lo} a escribir {su} libro.\nNuestro programa se basa en una metodología que ya ha ayudado a cientos de personas a escribir sus libros.\nEs un proceso organizado, paso a paso, que comienza con {sus} ideas y experiencias, continúa con la estructura y el desarrollo de los capítulos y termina con la preparación y publicación de {su} libro en Amazon. Todo este camino no lo {U:recorre|recorres} {G:solo|sola}. Nosotras supervisamos {sus} avances, resolvemos {sus} dudas y {lo} orientamos durante todo el proceso.', 'Di'), 4)}
+    ${mc('VALIDAR EL VALOR – VISIBILIZAR EL COSTO DE POSTERGAR', gb('«¿Esta es la ayuda que {U:estaba|estabas} buscando?»', 'Pregunta', 'pre') + silence + gb('«¿Qué parte del acompañamiento {le} serviría más?»', 'Si responde que sí', 'alt'), 5)}
+    ${mc('PRECIO Y CIERRE', gb('«Para trabajar conmigo y con mi equipo durante los próximos tres meses, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo S/ 1.380. {U:Puede|Puedes} pagarla en cuatro partes: S/ 270 para reservar {su} cupo y tres cuotas mensuales de S/ 370.»', 'Di') + silence, 6)}
+  </div></div>`);
+
+  /* Diapositiva 6 · Costo de postergar */
+  const costo = slide(3, 'Antes del precio: el costo de postergar', 'Llamada – Antes del precio: el costo de postergar', `
+    <div class="cols2c"><div class="stk">
+      <div class="fact"><b>INICIO</b><p>${T('El próximo grupo comienza el {iniY}')}</p></div>
+      <div class="fact"><b>RESERVA ANTICIPADA</b><p>Incluye hasta dos horas semanales de mentoría individual adicional, desde la reserva hasta el inicio del programa.</p></div>
+      <div class="fact"><b>META DEL GRUPO</b><p>${T('Publicación objetivo: {pubY}, condicionada al avance del autor y al cumplimiento de sus actividades.')}</p></div>
+      ${mc('LA FECHA, COMO OPORTUNIDAD', gb('«{n}, nuestro próximo grupo comienza el {ini}. {U:Si decide incorporarse|Si decides incorporarte}, trabajaremos durante tres meses con el objetivo de que {su} libro esté publicado el {pub}, siempre que {U:cumpla|cumplas} con las actividades del programa. Además, si {U:reserva|reservas} ahora, {U:podrá|podrás} aprovechar las mentorías individuales adicionales que ofrecemos antes del inicio.»', 'Di'))}
+    </div>
+    ${mc('QUE LA PERSONA CALCULE: PREGUNTE Y CALLE',
+        gb('«{n}, me {U:ha contado|has contado} que {U:quiere|quieres} compartir {sus} experiencias para ayudar a otras personas a través de {sus} vivencias y dejar un legado, ¿qué tan importante para {ti} es escribir {su} libro ahora?\nYa {U:esperó|esperaste} x años. Si pasa un año más sin escribirlo, ¿cómo {U:se sentiría|te sentirías}?\n¿Qué {U:cree|crees} que tendría que cambiar para que {U:deje|dejes} de ser un proyecto pendiente?»', 'Pregunta', 'pre') +
+        gb('«{n}, hasta ahora no {U:había podido|habías podido} escribir {su} libro porque no {U:sabía|sabías} dónde empezar ni cómo organizar {sus} ideas. Si {U:encontrara|encontraras} un programa que {lo} lleve paso a paso y personas que {lo} acompañen durante el proceso, y que además estuviera al alcance de {su} presupuesto, ¿qué {le} impediría tomarlo?', 'Pregunta', 'pre') +
+        gb('«{n}, si ya {U:tiene|tienes} claro qué libro {U:quiere|quieres} escribir y ahora {U:conoce|conoces} una forma de hacerlo, ¿qué {U:considera|consideras} que {le} falta para decidir{U:se|te} a comenzar?»', 'Pregunta', 'pre') +
+        gb('«De todo lo que hemos conversado, ¿hay alguna parte del proceso que todavía {le} haga dudar de que {U:pueda|puedas} terminar {su} libro?»', 'Pregunta', 'pre') +
+        gb('«{n}, quiero preguntar{le} algo: ¿qué es exactamente lo que {le} hace dudar de que {U:pueda|puedas} conseguirlo?»', 'Pregunta', 'pre') + silence)}
+    </div>`);
+
+  /* Diapositiva 7 · Objeciones de tiempo y dinero */
+  const tiempoDinero = slide(4, 'Objeciones de tiempo y dinero', 'Llamada – Objeciones de tiempo y dinero', `<div class="cols3w">
+    ${mc('NO TENGO TIEMPO',
+      gb('«{n}, cuando me {U:dice|dices} que no {U:tiene|tienes} tiempo, ¿{U:se refiere|te refieres} a que {le} preocupa encontrar momentos para trabajar en {su} libro o a que no {U:podría|podrías} asistir a las mentorías?»', 'Pregunta', 'pre') +
+      gb('«{n}, nuestro programa está diseñado precisamente para personas que tienen sus propias responsabilidades y necesitan avanzar en su libro sin dejar de lado sus actividades.\nEl trabajo es progresivo. Estimamos que, dedicándole aproximadamente una hora diaria, {U:puede|puedes} conseguir avances importantes.\nAdemás, las mentorías son espacios de acompañamiento disponibles, no clases de asistencia obligatoria. Tenemos horarios nocturnos y los sábados, para que {U:pueda|puedas} aprovecharlas según {sus} necesidades.\nAhora que {U:conoce|conoces} cómo está organizado el programa, ¿{U:considera|consideras} que {U:podría|podrías} reservar un espacio diario para trabajar en ese libro que tanto {U:desea|deseas} escribir?»', 'Respuesta') +
+      gb('«Claro, {n}. Por eso precisamente estamos aquí. Nuestra metodología está diseñada para que {U:pueda|puedas} escribir {su} libro paralelamente a {su} trabajo. ¿Cuál es la limitación que {U:encuentra|encuentras}?»', 'Versión corta', 'alt'))}
+    ${mc('«S/ 1.380 ES MUCHO DINERO PARA MÍ EN ESTE MOMENTO»',
+      gb('«{n}, entiendo que S/ 1.380 es una inversión importante. Pero quisiera que la {U:mire|mires} desde otra perspectiva.\n{U:Usted no está invirtiendo|Tú no estás invirtiendo} solamente en tres meses de acompañamiento. {U:Está invirtiendo|Estás invirtiendo} en hacer realidad un proyecto que {U:lleva|llevas} años queriendo realizar y para el que hasta ahora no {U:ha encontrado|has encontrado} el camino.\nAl finalizar, {U:tendrá|tendrás} su propio libro, escrito y publicado por {U:usted mism{G:o|a}|ti mism{G:o|a}}, con {su} nombre, {sus} experiencias y {sus} conocimientos. Y ese libro se queda {con} para toda la vida. Puede convertirse en una carta de presentación profesional, fortalecer {su} autoridad en lo que {U:conoce|conoces}, abrir{le} otras puertas y permitir{le} compartir {su} experiencia con muchas otras personas.\n{n}, quisiera preguntar{le} algo: ¿{U:cree|crees} que vale la pena hacer esta inversión para conseguirlo?»', 'Respuesta'))}
+    ${mc('ESTÁ CARO',
+      gb('«¿Caro comparado con qué, {n}?»', 'Pregunta', 'pre') +
+      gb('«{n}, ¿cuánto {U:pensó|pensaste} que costaría y qué {U:imaginaba|imaginabas} que incluía por ese precio?»', 'Si dice: «Pensé que costaba mucho menos»', 'alt') +
+      gb('«{n}, cuando me {U:dice|dices} que se sale de {su} presupuesto, ¿es porque en este momento realmente no {U:puede|puedes} destinar ese dinero o porque {U:había pensado|habías pensado} invertir una cantidad menor en {su} libro?»', 'Si dice que se sale de su presupuesto', 'alt'))}
+  </div>`);
+
+  /* Diapositiva 8 · Objeciones de decisión */
+  const decision = slide(5, 'Objeciones de decisión', 'Llamada – Objeciones de decisión', `<div class="cols2s"><div class="stk">
+    ${mc('LO VOY A PENSAR',
+      gb('«Por mi experiencia, cuando una persona quiere escribir su libro, reconoce que nuestro programa puede ayudarla y considera que la inversión está a su alcance, pero aun así necesita pensarlo, normalmente es porque hay algo que todavía la detiene.\n{n}, ¿qué es lo que {U:a usted {G:lo|la}|a ti te} está deteniendo?»', 'Opción 1') +
+      gb('«{n}, {U:entiendo que necesite|entiendo que necesites} pensarlo. Yo también tendría mis dudas porque estamos hablando de un libro, ¡es un gran proyecto!\nSin embargo, no estamos aquí para que {U:confíe|confíes} solo en mi palabra sino para estar seguros de que este método puede ayudar{lo}.\n¿Cuál es {su} mayor duda?»', 'Opción 2'))}
+    ${mc('TENGO QUE EVALUARLO', gb('«{n}, comprendo que es una inversión que {U:debe|debes} evaluar.\nMe gustaría hacer{le} una pregunta: {U:usted lleva|tú llevas} varios años queriendo escribir {su} libro y todavía no {U:ha conseguido|has conseguido} hacerlo. ¿Qué otra alternativa {U:tiene|tienes} para conseguir escribirlo y publicarlo?»', 'Di'))}
+  </div><div class="stk">
+    ${mc('CONSULTAR CON MI PAREJA', gb('«Por supuesto, {n}. ¿{U:Su pareja está con usted|Tu pareja está contigo} en este momento? Si {U:le parece|te parece}, puedo explicar{le} yo misma cómo funciona nuestro programa y responder cualquier pregunta que tenga.»', 'Di'))}
+    ${mc('MÁNDEME LA PROPUESTA', gb('«Por supuesto, {n}, con mucho gusto {U:se|te} la envío. Solo quisiera hacer{le} una pregunta: en la propuesta {U:encontrará|encontrarás} exactamente toda la información que acabamos de conversar. ¿Qué {U:necesita|necesitas} revisar en el documento que todavía {le} está generando dudas?»', 'Di'))}
+  </div></div>`);
+
+  /* Diapositiva 9 · Cierre de ventas */
+  const cierres = slide(6, 'Cierre de ventas', 'Llamada – Cierre de ventas', `<div class="cols3">
+    ${mc('CIERRE POR TRANSFORMACIÓN', gb('«{n}, dejando de lado el temor que puede generar iniciar un proyecto tan importante, ¿qué {U:necesita|necesitas} para convencer{U:se|te} de que el momento de iniciar ha llegado?»', 'Di'))}
+    ${mc('CIERRE POR DECISIÓN', gb('«{n}, por todo lo que hemos conversado, considero que nuestro programa es lo que {U:usted necesita|tú necesitas} para escribir {su} libro. Nuestro próximo grupo comienza el {ini} y trabajamos con cupos limitados porque brindamos un acompañamiento personalizado. Solo nos quedan tres espacios. ¿{U:Le|Te} parece que aseguremos {su} participación con {su} reserva?»', 'Di'))}
+    ${mc('CIERRE POR EL SUEÑO PENDIENTE', gb('«{n}, {U:usted lleva|tú llevas} varios años queriendo escribir {su} libro y ahora {U:conoce|conoces} una metodología que puede ayudar{lo} a conseguirlo. Nuestro próximo grupo comienza el {ini}. Trabajamos con grupos de solo 10 personas para brindar un acompañamiento personalizado y nos quedan únicamente tres cupos disponibles. ¿Qué {le} parece si aprovechamos y comenzamos a trabajar en {su} libro de una vez?»', 'Di'))}
+    ${mc('CIERRE CON COMPROMISO', gb('«{n}, {U:usted tiene|tú tienes} las experiencias y los conocimientos que {U:quiere|quieres} compartir. Nosotras tenemos la metodología y el acompañamiento para ayudar{lo} a convertirlos en un libro. Nuestro próximo grupo comienza el {ini} y trabajamos con cupos limitados porque brindamos un acompañamiento personalizado. Solo nos quedan tres espacios. ¿{U:Le|Te} parece que aseguremos {su} participación con {su} reserva?»', 'Di'))}
+    ${mc('CIERRE POR SOLUCIÓN', gb('«{n}, {U:usted me comentó|tú me comentaste} que {su} principal dificultad era no saber por dónde empezar ni cómo organizar {sus} ideas. Ahora que {U:conoce|conoces} cómo vamos a ayudar{lo} a resolver esas dificultades, ¿{U:le parece|te parece} si comenzamos? Solo quedan tres cupos.»', 'Di'))}
+    ${mc('CIERRE POR CONFIRMACIÓN', gb('«{n}, ¿{U:considera|consideras} que nuestro programa es lo que {U:necesita|necesitas} para escribir y publicar {su} libro?»', 'Pregunta', 'pre') +
+      gb('«Perfecto. Entonces, ¿{U:le parece|te parece} que reservemos uno de los tres cupos que me quedan disponibles para el {ini}?»', 'Si responde que sí', 'alt'))}
+  </div>`);
+
+  return apertura + seis + costo + tiempoDinero + decision + cierres;
+}
+
+/* ===== Pestaña 3 · El seguimiento ===== */
+const SEG_A = [
+  ['1 · SEGUIMIENTO (DÍA 1)',
+    'Gracias por la conversación, {n}',
+    'Buenas tardes, {n}.\nFue un gusto conversar {con} y conocer {su} bonito proyecto y, sobre todo, el propósito que hay detrás de él.\nSoy {arq}, de Arquitectas de Autores Publicados.\nMe alegró mucho saber que {le} gustó nuestra propuesta y que {U:está|estás} animad{G:o|a} a hacer realidad {su} sueño de escribir y publicar {su} libro.\nEstoy segura de que, con nuestra metodología, {su} compromiso y nuestro acompañamiento, podemos hacer un gran trabajo juntos.\nComo quedamos, volveré a llamar{lo} para coordinar {su} reserva y los siguientes pasos.\n¡Será un gusto acompañar{lo} en este camino!'],
+  ['2 · SEGUIMIENTO (DÍA 2)',
+    'Podemos comenzar con {su} libro desde ahora',
+    'Buenas tardes, {n}.\nFue un gusto conversar {con} y conocer {su} proyecto. Se nota cuánto significa este libro para {ti}. Gracias por compartirlo conmigo.\nPor lo que conversamos, estoy convencida de que nuestra metodología y acompañamiento pueden ayudar{lo} a hacerlo realidad. Como {le} comenté, nuestro próximo grupo comienza el {ini}. Sin embargo, no tenemos que esperar hasta esa fecha: desde que {U:realiza|realizas} {su} reserva podemos comenzar con mentorías individuales. Todavía tenemos dos semanas por delante que podemos aprovechar para avanzar en {su} libro.\n¿{U:Le|Te} parece si vamos avanzando con {su} reserva para que {U:pueda|puedas} comenzar a aprovechar las mentorías individuales desde ahora?'],
+  ['3 · SEGUIMIENTO (DÍA 5)',
+    '¿Surgió algún inconveniente con {su} inscripción?',
+    'Buenas tardes, {n}.\nEn nuestra conversación {lo} noté muy entusiasmad{G:o|a} con comenzar a escribir {su} libro.\nComo no hemos podido volver a conversar, quisiera saber si ha surgido algún inconveniente que {le} esté impidiendo avanzar con {su} inscripción.\nNuestro próximo grupo comienza el {ini} y solo nos quedan tres cupos. Me gustaría mucho que {U:pudiera|pudieras} formar parte de este grupo, especialmente porque sé cuánto significa para {ti} escribir {su} libro.\n{n}, ¿hay algo que todavía {le} genere dudas o {le} esté impidiendo tomar la decisión?\nMe encantaría ayudar{lo}.'],
+  ['4 · DEFINICIÓN (DÍA 7)',
+    'Cierre de {su} solicitud en Arquitectas de Autores',
+    'Muy buenas tardes, {n}.\nHe intentado comunicarme {con} después de nuestra conversación, pero no hemos logrado retomar el contacto. Me hubiera encantado acompañar{lo} en este proyecto, especialmente después de conocer cuánto significa para {ti} escribir {su} libro.\nComprendo que quizás este no sea el momento, así que, por ahora, daré por cerrado el seguimiento de {su} solicitud. {Lo} animo a no dejar ese sueño pendiente. ¡{Usted} sí {U:puede|puedes}! Cuando {U:tome|tomes} la decisión de emprenderlo, con gusto {lo} ayudo.\n{U:Le|Te} deseo éxitos. ¡{U:Le|Te} dejo un cordial saludo!']
+];
+const SEG_B = [
+  ['1 · PRESENTACIÓN (DÍA 0)',
+    'Sobre {su} solicitud de información para escribir y publicar {su} libro',
+    'Buenas tardes, {sr}. ¡Qué gusto saludar{lo}!\nAntes que nada, felicitaciones por el libro que {U:está|estás} pensando escribir.\nSoy {arq}, de Arquitectas de Autores Publicados. Acabo de llamar{lo} porque recibimos {su} solicitud de información y con mucho gusto podemos ayudar{lo} a escribir y publicar {su} libro.\n{U:Dígame|Dime}, ¿{U:le|te} viene mejor que conversemos hoy o {lo} vuelvo a llamar mañana?\nSe nota cuánto significa este libro para {ti}. Justamente por eso: ¿qué {le} falta para empezar el {ini}?'],
+  ['2 · POSIBLE OBSTÁCULO (DÍA 2)',
+    'Intenté comunicarme {con}',
+    'Muy buenas tardes, {sr}.\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con} por teléfono, pero no logramos conversar.\n{U:Le|Te} cuento que en este camino he conocido a muchas personas que llevan años soñando con escribir su primer libro, pero no saben por dónde empezar. Si ese también es {su} caso, no {U:se preocupe|te preocupes}: nosotras conocemos la ruta y podemos ayudar{lo} a hacer realidad ese sueño.\n¿En qué momento {U:se encuentra|te encuentras} libre para que {le} explique cómo podemos ayudar{lo}?'],
+  ['3 · DEFINICIÓN (DÍA 5)',
+    '¿Escribir {su} libro sigue siendo una prioridad?',
+    'Buenas tardes, {sr}.\nSoy {arq}, de Arquitectas de Autores Publicados. {Lo} volví a llamar, sin éxito.\nMe hubiera gustado explicar{le} cómo, con nuestra metodología y acompañamiento profesional, {lo} podemos guiar paso a paso durante todo el proceso para escribir {su} libro: desde {sus} ideas hasta la publicación en Amazon. Nuestro programa dura 12 semanas, empezamos el {ini} y los cupos son limitados.\n¿Escribir {su} libro sigue siendo una prioridad para {ti} o {U:prefiere|prefieres} dejar ese proyecto para más adelante?'],
+  ['4 · DEFINICIÓN (DÍA 7)',
+    'Cierre de {su} solicitud de información',
+    '{Sr}, muy buenas tardes.\nIntenté comunicarme {con} en varias oportunidades, pero no hemos logrado conversar. Quizás este no sea el momento de comenzar a trabajar en {su} libro, así que por ahora daré por cerrado el seguimiento a {su} solicitud. Si más adelante {U:toma|tomas} la decisión, {U:puede comunicarse|puedes comunicarte} con nosotras. {U:Le|Te} deseo muchos éxitos.\n\n{arq}\nArquitectas de Autores Publicados']
+];
+const SIG = '\n\n{arq}\nArquitectas de Autores Publicados';
+
+const BREVES = [
+  ['«¿DE QUÉ SE TRATA?»', '{Sr}:\nCon nuestro programa, {U:usted podrá|tú podrás} escribir y publicar {su} propio libro, aunque hoy no {U:sepa|sepas} por dónde empezar.\nNo es un taller ni un curso de escritura. Trabajamos con una metodología que ya ha ayudado a cientos de personas a convertirse en autores y, con nuestro acompañamiento profesional, {U:usted también podrá|tú también podrás} lograrlo.\n{U:Usted aporta|Tú aportas} {sus} vivencias o conocimientos y {U:se dedica|te dedicas} a desarrollar {su} libro, mientras nosotras {lo} guiamos paso a paso durante todo el proceso.\n¿{U:Le|Te} viene bien que conversemos hoy o mañana por la mañana?'],
+  ['«ENVÍEME LA INFORMACIÓN»', 'Con mucho gusto, {sr}.\n{U:Le|Te} compartiré nuestra propuesta, donde {U:encontrará|encontrarás} las etapas del programa, cómo funciona el acompañamiento, los horarios y la inversión. Sin embargo, hay algo importante: cada autor tiene un proyecto diferente y nuestra metodología está diseñada para trabajar a partir de sus propias ideas, experiencias y conocimientos. Por eso me gustaría conocer qué libro {U:tiene|tienes} pensado escribir, para explicar{le} cómo podemos ayudar{lo} específicamente en {su} caso.\n¿{U:Le|Te} viene bien que conversemos hoy o mañana por la mañana?'],
+  ['«AHORA NO PUEDO»', 'Por supuesto, {sr}.\n¿{U:Le|Te} viene mejor que {lo} llame más tarde o mañana por la mañana?'],
+  ['«¿CUÁNTO CUESTA?»', 'Para trabajar conmigo y con mi equipo durante los próximos tres meses, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo S/ 1.380.\n{U:Puede|Puedes} pagarla en cuatro partes: S/ 270 para reservar {su} cupo y tres cuotas mensuales de S/ 370.\n¿Esta inversión es viable para {ti} en este momento?'],
+  ['«¿ESTO ES SERIO?»', 'Por supuesto, {sr}.\nNuestro programa se basa en una metodología que ya ha ayudado a cientos de personas a escribir sus libros.\nEs un proceso organizado, paso a paso, que comienza con {sus} ideas y experiencias, continúa con la estructura y el desarrollo de los capítulos y termina con la preparación y publicación de {su} libro en Amazon. Todo este camino no lo {U:recorre|recorres} {G:solo|sola}. Nosotras supervisamos {sus} avances, resolvemos {sus} dudas y {lo} orientamos durante todo el proceso.\nCon gusto puedo mostrar{le} cómo funciona.'],
+  ['CONFIRMAR LA CITA', 'Perfecto, {sr}. Quedamos para el jueves a las 5 de la tarde. {Lo} llamaré a este mismo número para conocer el libro que {U:desea|deseas} escribir y explicar{le} cómo podemos ayudar{lo}.\n¡Hasta entonces!']
+];
+
+function seguimiento(mode) {
+  const grid = (items) => `<div class="msgs">${items.map(it => card(it[0], mode === 'wa' ? wa(it[2]) : mail(it[1], it[2] + (it[0].startsWith('4') && it[2].indexOf('Arquitectas de Autores Publicados') > -1 ? '' : SIG)))).join('')}</div>`;
+  const head = (id, n, title, sub) => `<div class="sh" id="${id}"><span class="sn">${n}</span><div><h2>${title}</h2><p>${sub}</p></div></div>`;
+  const tag = mode === 'wa' ? 'WhatsApp' : 'correo';
+  return `<section class="blk blk1">${head(mode + '-interes', 1, 'Cliente mostró interés, pero dejó de responder', 'Seguimiento por ' + tag + ' · días 1, 2, 5 y 7')}${grid(SEG_A)}</section>
+    <section class="blk blk2">${head(mode + '-nunca', 2, 'Cliente nunca respondió', 'Seguimiento por ' + tag + ' · días 0, 2, 5 y 7')}${grid(SEG_B)}</section>` +
+    (mode === 'wa' ? `<section class="blk blk3">${head('wa-breves', 3, 'Mensajes breves de WhatsApp', 'Respuestas rápidas a lo que el cliente escribe')}<div class="msgs">${BREVES.map(b => card(b[0], wa(b[1]))).join('')}</div></section>` : '');
+}
+
+function buildAll() {
+  return { bases: buildBases(), llamada: buildLlamada(), wa: seguimiento('wa'), correo: seguimiento('mail') };
+}
+
+/* ===== Interfaz ===== */
+function refresh() {
+  document.querySelectorAll('[data-i]').forEach(el => { el.innerHTML = html(TPL[+el.dataset.i]); });
+}
+function toast(btn, ok) {
+  const old = btn.dataset.l || btn.textContent;
+  btn.dataset.l = old;
+  btn.textContent = ok ? '¡Copiado!' : 'No se pudo copiar';
+  btn.classList.toggle('done', ok);
+  setTimeout(() => { btn.textContent = old; btn.classList.remove('done'); }, 1600);
+}
+/* Correo: HTML limpio (sin resaltados), un bloque por línea y una línea vacía entre párrafos */
+function mailHtml(text) {
+  return text.split(/\n\n/).map(par => `<div>${par.split('\n').map(esc).join('<br>')}</div>`).join('<div><br></div>');
+}
+function copyRich(htmlStr, text, btn) {
+  const viaSelection = () => {
+    const box = document.createElement('div');
+    box.contentEditable = 'true';
+    box.style.cssText = 'position:fixed;left:-9999px;top:0;white-space:normal;background:#fff;color:#000;font:11pt Calibri,Arial,sans-serif';
+    box.innerHTML = htmlStr;
+    document.body.appendChild(box);
+    const rg = document.createRange(); rg.selectNodeContents(box);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(rg);
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    sel.removeAllRanges(); document.body.removeChild(box);
+    if (ok) toast(btn, true); else copyPlain(text, btn);
+  };
+  try {
+    if (navigator.clipboard && window.ClipboardItem) {
+      const item = new ClipboardItem({
+        'text/html': new Blob([htmlStr], { type: 'text/html' }),
+        'text/plain': new Blob([text], { type: 'text/plain' })
       });
-      footer.appendChild(button);
-      card.append(head, body, footer);
-      return card;
+      navigator.clipboard.write([item]).then(() => toast(btn, true), viaSelection);
+      return;
     }
+  } catch (e) {}
+  viaSelection();
+}
+function copyPlain(text, btn) {
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); toast(btn, ok);
+  };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast(btn, true), fallback);
+    else fallback();
+  } catch (e) { fallback(); }
+}
+function doCopy(btn) {
+  const kind = btn.dataset.copy;
+  const box = btn.closest('.msg');
+  const txts = box.querySelectorAll('.txt');
+  if (kind === 'subj') return copyPlain(plain(TPL[+txts[0].dataset.i]), btn);
+  const text = plain(TPL[+txts[txts.length - 1].dataset.i]);
+  if (kind === 'mail') return copyRich(mailHtml(text), text, btn);
+  return copyPlain(text, btn); // WhatsApp: texto plano, con sus saltos y líneas en blanco
+}
+function go(tab, anchor) {
+  document.querySelectorAll('.tab').forEach(b => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  document.querySelectorAll('.panel').forEach(p => { p.hidden = p.dataset.panel !== tab; });
+  const el = anchor && document.getElementById(anchor);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function init() {
+  const all = buildAll();
+  Object.keys(all).forEach(k => { document.querySelector(`[data-panel="${k}"]`).innerHTML = all[k]; });
+  refresh();
+  const bind = (id, key, ev) => { const el = document.getElementById(id); el.addEventListener(ev, () => { S[key] = el.value; refresh(); }); };
+  bind('f-nombre', 'nombre', 'input'); bind('f-fecha', 'fecha', 'input'); bind('f-arq', 'arq', 'change');
+  document.querySelectorAll('input[name=sexo],input[name=trato]').forEach(r => r.addEventListener('change', () => { S[r.name] = r.value; refresh(); }));
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => go(b.dataset.tab)));
+  document.addEventListener('click', e => {
+    const t = e.target.closest('button, a[data-go]');
+    if (!t) return;
+    if (t.matches('[data-go]')) { e.preventDefault(); const p = t.dataset.go.split('|'); go(p[0], p[1]); }
+    else if (t.matches('[data-copy]')) doCopy(t);
+  });
+}
+if (typeof document !== 'undefined') init();
+if (typeof module !== 'undefined') module.exports = { S, TPL, render, plain, buildAll };
 
-    function render() {
-      const email = activeTab === 'seguimientos';
-      const whatsapp = activeTab === 'whatsapp';
-      const items = email ? seguimientos : (whatsapp ? whatsappSeguimiento : originales.filter(x => activeGender === 'ambos' || x.gender === activeGender));
-      document.getElementById('genderNav').hidden = email || whatsapp;
-      document.getElementById('sectionTitle').textContent = email ? 'Correos de seguimiento' : (whatsapp ? 'Seguimientos para WhatsApp' : 'Mensajes originales');
-      document.getElementById('sectionDescription').textContent = email
-        ? 'Cinco correos completos con su asunto, listos para copiar.'
-        : (whatsapp ? 'Los mismos cinco enfoques, adaptados a mensajes breves de chat. Son válidos para hombres y mujeres.'
-          : 'Los originales de tu hoja, con versiones para mujeres y hombres y el saludo personalizable.');
-      document.getElementById('count').textContent = `${items.length} ${items.length === 1 ? 'mensaje' : 'mensajes'}`;
-      cardsEl.replaceChildren(...items.map(makeCard));
-    }
-
-    document.querySelectorAll('[data-tab]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeTab = btn.dataset.tab;
-        document.querySelectorAll('[data-tab]').forEach(el => {
-          const selected = el === btn;
-          el.classList.toggle('active', selected);
-          el.setAttribute('aria-selected', String(selected));
-        });
-        render();
-      });
-    });
-
-    document.querySelectorAll('[data-gender]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeGender = btn.dataset.gender;
-        document.querySelectorAll('[data-gender]').forEach(el => el.classList.toggle('active', el === btn));
-        render();
-      });
-    });
-
-    nameEl.addEventListener('input', () => {
-      document.querySelectorAll('.card .preview').forEach((el, index) => {
-        const items = activeTab === 'seguimientos' ? seguimientos : (activeTab === 'whatsapp' ? whatsappSeguimiento : originales.filter(x => activeGender === 'ambos' || x.gender === activeGender));
-        el.innerHTML = formattedPreview(items[index].body);
-      });
-    });
-
-    render();
-  </script>
+</script>
 </body>
 </html>
