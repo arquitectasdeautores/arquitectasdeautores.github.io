@@ -27,11 +27,12 @@ header p{margin:0;color:var(--slate);font-size:12px}
 .seg span{display:block;padding:9px 6px}
 .seg input:checked+span{background:var(--teal);color:#fff}
 .seg input:focus-visible+span{outline:2px solid var(--gold);outline-offset:-2px}
+.fld.wide{grid-column:span 2}
 .hint{grid-column:1/-1;font-size:11px;color:var(--slate);margin:0}
-.tabs{position:sticky;top:0;z-index:5;background:var(--paper);display:flex;gap:30px;border-bottom:1px solid var(--line);margin:14px 0 26px;overflow-x:auto}
-.tab{background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-1px;padding:14px 2px 11px;font:600 13.5px var(--f);color:var(--slate);cursor:pointer;white-space:nowrap}
-.tab:hover{color:var(--navy)}
-.tab.on{color:var(--navy);border-bottom-color:var(--gold);font-weight:700}
+.tabs{position:sticky;top:0;z-index:5;background:var(--paper);display:flex;gap:6px;border-bottom:1px solid var(--line);margin:14px 0 26px;padding-top:6px;overflow-x:auto}
+.tab{flex:1;min-width:max-content;background:#e9eef1;border:1px solid var(--line);border-bottom:none;border-radius:12px 12px 0 0;margin-bottom:-1px;padding:13px 18px 11px;font:600 13.5px var(--f);color:var(--slate);cursor:pointer;white-space:nowrap}
+.tab:hover{background:#f2f5f7;color:var(--navy)}
+.tab.on{background:#fff;color:var(--navy);font-weight:700;border-top:4px solid var(--gold);padding-top:10px;box-shadow:0 -2px 6px rgba(32,52,71,.06)}
 
 /* Bases */
 .hero{background:var(--cream);border:1px solid #ead9b8;border-radius:16px;padding:26px 28px 24px;margin-bottom:10px}
@@ -114,6 +115,14 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
 .cp:hover{background:var(--tealsoft)}
 .cp.done{background:var(--teal);color:#fff}
 .v{background:var(--cream2);border-radius:3px;padding:0 1px}
+.q2>.mc{column-count:2;column-gap:16px}
+.q2>.mc>.mh{column-span:all}
+.q2 .gb,.q2 .silence,.q2 ol.gq li{break-inside:avoid}
+.q2 ol.gq{display:block}
+.q2 ol.gq li{margin-bottom:6px}
+.facts1{display:grid;gap:10px;margin-bottom:8px}
+.subh{font-size:12px;letter-spacing:.08em;color:var(--slate);margin:6px 0 10px;padding-left:10px;border-left:4px solid var(--gold)}
+.blk .subh~.cols2s,.blk .subh~.cols3w{margin-bottom:18px}
 [hidden]{display:none!important}
 @media(max-width:1000px){.cols3{grid-template-columns:repeat(2,1fr)}.msgs{grid-template-columns:1fr}}
 @media(max-width:900px){.cols2s,.cols2c,.cols3w,.decrow{grid-template-columns:1fr}}
@@ -136,6 +145,10 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
     <div class="fld"><span class="lbl">Tú / Usted</span><div class="seg" role="radiogroup" aria-label="Trato">
       <label><input type="radio" name="trato" value="U" checked><span>Usted</span></label>
       <label><input type="radio" name="trato" value="T"><span>Tú</span></label></div></div>
+    <div class="fld wide"><span class="lbl">Saludo</span><div class="seg" role="radiogroup" aria-label="Saludo">
+      <label><input type="radio" name="saludo" value="d"><span>Buenos días</span></label>
+      <label><input type="radio" name="saludo" value="t" checked><span>Buenas tardes</span></label>
+      <label><input type="radio" name="saludo" value="n"><span>Buenas noches</span></label></div></div>
     <div class="fld"><label for="f-fecha">Inicio del programa</label><input type="date" id="f-fecha" value="2026-12-04"></div>
     <div class="fld"><label for="f-arq">Arquitecta</label><select id="f-arq"><option>Jaqueline Rincón</option><option selected>Consuelo Alarcón</option></select></div>
     <p class="hint">La fecha de publicación objetivo se calcula sola: 93 días después del inicio (del 4 de diciembre de 2026 al 7 de marzo de 2027).</p>
@@ -158,7 +171,8 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
 <script>
 /* ===== Motor de personalización ===== */
 const MES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const S = { nombre: '', sexo: 'F', trato: 'U', fecha: '2026-12-04', arq: 'Consuelo Alarcón' };
+const S = { nombre: '', sexo: 'F', trato: 'U', saludo: 't', fecha: '2026-12-04', arq: 'Consuelo Alarcón' };
+const SALUDOS = { d: ['Buenos días', 'Muy buenos días'], t: ['Buenas tardes', 'Muy buenas tardes'], n: ['Buenas noches', 'Muy buenas noches'] };
 const TPL = [];
 const V = s => '\u0001' + s + '\u0002';
 
@@ -177,6 +191,9 @@ function tokens() {
   const sr = (f ? 'señora ' : 'señor ') + nom;
   return {
     n: V(nom),
+    saludo: SALUDOS[S.saludo][0],
+    msaludo: SALUDOS[S.saludo][1],
+    msaludol: SALUDOS[S.saludo][1].toLowerCase(),
     arq: V(S.arq),
     ini: V(ini ? fmtD(ini, false) : '[fecha de inicio]'),
     iniY: V(ini ? fmtD(ini, true) : '[fecha de inicio]'),
@@ -261,23 +278,14 @@ const gb = (tpl, label, kind = 'di') => `<div class="gb ${kind}"><span class="gl
 const gq = arr => `<ol class="gq">${arr.map(q => `<li data-i="${reg(q)}"></li>`).join('')}</ol>`;
 const silence = '<div class="silence">SILENCIO</div>';
 const mc = (title, inner, num) => `<article class="mc">${num ? `<div class="mh"><span class="mn">${num}</span><h3>${title}</h3></div>` : `<div class="mh"><h3>${title}</h3></div>`}${inner}</article>`;
-const slide = (n, title, sub, inner) => `<section class="blk blk${((n - 1) % 3) + 1}"><div class="sh"><span class="sn">${n}</span><div><h2>${title}</h2><p>${sub}</p></div></div>${inner}</section>`;
+const block = (idx, badge, title, sub, inner) => `<section class="blk blk${(idx % 3) + 1}"><div class="sh"><span class="sn">${badge}</span><div><h2>${title}</h2><p>${sub}</p></div></div>${inner}</section>`;
+const subh = t => `<h3 class="subh">${t}</h3>`;
 
 function buildLlamada() {
-  /* Diapositiva 4 · Apertura */
-  const apertura = slide(1, 'Apertura de la llamada', 'Llamada – Lo más pronto posible desde que se recibe el lead', `
-    ${mc('APERTURA', gb('«Buenas tardes, {n}. ¡Qué gusto saludar{lo}!\nAntes que nada, felicitaciones por el libro que está pensando escribir. {Lo} llamo precisamente porque {U:usted nos solicitó|tú nos solicitaste} información al respecto y con mucho gusto podemos ayudar{lo}.\nSoy {arq}, de Arquitectas de Autores. {U:Dígame|Dime}, ¿podemos conversar en este momento?»', 'Di') + gb('«Por supuesto, {n}. ¿{U:Prefiere|Prefieres} que {lo} llame hoy por la tarde o mañana por la mañana?»', 'Si no puede', 'alt'))}
-    <div style="height:14px"></div>
-    <div class="mc"><div class="mh"><h3>¿CONTESTÓ?</h3></div>
-      <div class="decrow">
-        <div class="dt yes"><b>Sí</b><span>→ Diagnóstico</span></div>
-        <div class="dt no"><b>No</b><span>→ Dejar sonar, sin mensaje de voz, y enviar el <a href="#" data-go="wa|wa-nunca">WhatsApp 1</a> en menos de 2 minutos</span></div>
-      </div></div>`);
-
-  /* Diapositiva 5 · Los seis momentos */
-  const seis = slide(2, 'Los seis momentos', 'Llamada – Los seis momentos', `<div class="cols2s"><div class="stk">
-    ${mc('ENCUADRE', gb('«Con gusto, {n}. Antes de explicar{le} el programa, quiero hacer{le} algunas preguntas para conocer mejor {su} proyecto y entender qué {U:necesita|necesitas}. Así podré orientar{lo} y explicar{le} cómo podemos ayudar{lo}.»', 'Di'), 1)}
-    ${mc('DIAGNÓSTICO', gq([
+  const c_ap = mc('APERTURA', gb('«{saludo}, {n}. ¡Qué gusto saludar{lo}!\nAntes que nada, felicitaciones por el libro que está pensando escribir. {Lo} llamo precisamente porque {U:usted nos solicitó|tú nos solicitaste} información al respecto y con mucho gusto podemos ayudar{lo}.\nSoy {arq}, de Arquitectas de Autores. {U:Dígame|Dime}, ¿podemos conversar en este momento?»', 'Di') + gb('«Por supuesto, {n}. ¿{U:Prefiere|Prefieres} que {lo} llame hoy por la tarde o mañana por la mañana?»', 'Si no puede', 'alt'));
+  const c_enc = mc('ENCUADRE', gb('«Con gusto, {n}. Antes de explicar{le} el programa, quiero hacer{le} algunas preguntas para conocer mejor {su} proyecto y entender qué {U:necesita|necesitas}. Así podré orientar{lo} y explicar{le} cómo podemos ayudar{lo}.»', 'Di'), 1);
+  const c_dia = mc('DIAGNÓSTICO', gq([
+      '¿Qué {lo} impulsa a querer escribir este libro?',
       '¿Sobre qué {U:le gustaría|te gustaría} escribir y qué {U:quiere|quieres} conseguir con ese libro?',
       '¿Desde hace cuánto tiempo {U:tiene|tienes} la ilusión de escribirlo?',
       '¿Qué {lo} ha motivado a buscar ayuda precisamente ahora?',
@@ -285,97 +293,100 @@ function buildLlamada() {
       '¿Qué es lo que más {le} preocupa del proceso?',
       '¿Cuánto tiempo {U:podría|podrías} dedicar semanalmente a desarrollar {su} libro?',
       '¿Qué tan familiariz{G:ado|ada} {U:está|estás} con el uso de la computadora y las herramientas digitales?'
-    ]), 2)}
-    ${mc('RESUMIR', gb('«{n}, por lo que me {U:ha contado|has contado}, {U:lleva|llevas} varios años con la ilusión de escribir {su} libro. {U:Tiene|Tienes} la intención de ayudar a otros a partir de {sus} vivencias, {U:quiere|quieres} dejar un legado, pero todavía no {U:ha encontrado|has encontrado} la manera de organizar {sus} ideas y avanzar. ¿Es así?»', 'Di · ejemplo, adáptalo a lo que contó'), 3)}
-  </div><div class="stk">
-    ${mc('RECOMENDAR', gb('{n}, por lo que me {U:ha contado|has contado}, estoy convencida de que podemos ayudar{lo} a escribir {su} libro.\nNuestro programa se basa en una metodología que ya ha ayudado a cientos de personas a escribir sus libros.\nEs un proceso organizado, paso a paso, que comienza con {sus} ideas y experiencias, continúa con la estructura y el desarrollo de los capítulos y termina con la preparación y publicación de {su} libro en Amazon. Todo este camino no lo {U:recorre|recorres} {G:solo|sola}. Nosotras supervisamos {sus} avances, resolvemos {sus} dudas y {lo} orientamos durante todo el proceso.', 'Di'), 4)}
-    ${mc('VALIDAR EL VALOR – VISIBILIZAR EL COSTO DE POSTERGAR', gb('«¿Esta es la ayuda que {U:estaba|estabas} buscando?»', 'Pregunta', 'pre') + silence + gb('«¿Qué parte del acompañamiento {le} serviría más?»', 'Si responde que sí', 'alt'), 5)}
-    ${mc('PRECIO Y CIERRE', gb('«Para trabajar conmigo y con mi equipo durante los próximos tres meses, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo S/ 1.380. {U:Puede|Puedes} pagarla en cuatro partes: S/ 270 para reservar {su} cupo y tres cuotas mensuales de S/ 370.»', 'Di') + silence, 6)}
-  </div></div>`);
-
-  /* Diapositiva 6 · Costo de postergar */
-  const costo = slide(3, 'Antes del precio: el costo de postergar', 'Llamada – Antes del precio: el costo de postergar', `
-    <div class="cols2c"><div class="stk">
-      <div class="fact"><b>INICIO</b><p>${T('El próximo grupo comienza el {iniY}')}</p></div>
-      <div class="fact"><b>RESERVA ANTICIPADA</b><p>Incluye hasta dos horas semanales de mentoría individual adicional, desde la reserva hasta el inicio del programa.</p></div>
-      <div class="fact"><b>META DEL GRUPO</b><p>${T('Publicación objetivo: {pubY}, condicionada al avance del autor y al cumplimiento de sus actividades.')}</p></div>
-      ${mc('LA FECHA, COMO OPORTUNIDAD', gb('«{n}, nuestro próximo grupo comienza el {ini}. {U:Si decide incorporarse|Si decides incorporarte}, trabajaremos durante tres meses con el objetivo de que {su} libro esté publicado el {pub}, siempre que {U:cumpla|cumplas} con las actividades del programa. Además, si {U:reserva|reservas} ahora, {U:podrá|podrás} aprovechar las mentorías individuales adicionales que ofrecemos antes del inicio.»', 'Di'))}
-    </div>
-    ${mc('QUE LA PERSONA CALCULE: PREGUNTE Y CALLE',
+    ]), 2);
+  const c_res = mc('RESUMIR', gb('«{n}, por lo que me {U:ha contado|has contado}, {U:lleva|llevas} varios años con la ilusión de escribir {su} libro. {U:Tiene|Tienes} la intención de ayudar a otros a partir de {sus} vivencias, {U:quiere|quieres} dejar un legado, pero todavía no {U:ha encontrado|has encontrado} la manera de organizar {sus} ideas y avanzar. ¿Es así?»', 'Di · ejemplo, adáptalo a lo que contó'), 3);
+  const c_rec = mc('RECOMENDAR', gb('{n}, por lo que me {U:ha contado|has contado}, estoy convencida de que podemos ayudar{lo} a escribir {su} libro.\nNuestro programa se basa en una metodología que ya ha ayudado a cientos de personas a escribir sus libros.\nEs un proceso organizado, paso a paso, que comienza con {sus} ideas y experiencias, continúa con la estructura y el desarrollo de los capítulos y termina con la preparación y publicación de {su} libro en Amazon. Todo este camino no lo {U:recorre|recorres} {G:solo|sola}. Nosotras supervisamos {sus} avances, resolvemos {sus} dudas y {lo} orientamos durante todo el proceso.', 'Di'), 4);
+  const c_val = mc('VALIDAR EL VALOR – VISIBILIZAR EL COSTO DE POSTERGAR', gb('«¿Esta es la ayuda que {U:estaba|estabas} buscando?»', 'Pregunta', 'pre') + silence + gb('«¿Qué parte del acompañamiento {le} serviría más?»', 'Si responde que sí', 'alt'), 5);
+  const c_pre = mc('PRECIO Y CIERRE', gb('«Para trabajar conmigo y con mi equipo durante los próximos tres meses, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo S/ 1.380. {U:Puede|Puedes} pagarla en cuatro partes: S/ 270 para reservar {su} cupo y tres cuotas mensuales de S/ 370.»', 'Di') + silence, 6);
+  const c_cal = mc('QUE LA PERSONA CALCULE: PREGUNTE Y CALLE',
         gb('«{n}, me {U:ha contado|has contado} que {U:quiere|quieres} compartir {sus} experiencias para ayudar a otras personas a través de {sus} vivencias y dejar un legado, ¿qué tan importante para {ti} es escribir {su} libro ahora?\nYa {U:esperó|esperaste} x años. Si pasa un año más sin escribirlo, ¿cómo {U:se sentiría|te sentirías}?\n¿Qué {U:cree|crees} que tendría que cambiar para que {U:deje|dejes} de ser un proyecto pendiente?»', 'Pregunta', 'pre') +
         gb('«{n}, hasta ahora no {U:había podido|habías podido} escribir {su} libro porque no {U:sabía|sabías} dónde empezar ni cómo organizar {sus} ideas. Si {U:encontrara|encontraras} un programa que {lo} lleve paso a paso y personas que {lo} acompañen durante el proceso, y que además estuviera al alcance de {su} presupuesto, ¿qué {le} impediría tomarlo?', 'Pregunta', 'pre') +
         gb('«{n}, si ya {U:tiene|tienes} claro qué libro {U:quiere|quieres} escribir y ahora {U:conoce|conoces} una forma de hacerlo, ¿qué {U:considera|consideras} que {le} falta para decidir{U:se|te} a comenzar?»', 'Pregunta', 'pre') +
         gb('«De todo lo que hemos conversado, ¿hay alguna parte del proceso que todavía {le} haga dudar de que {U:pueda|puedas} terminar {su} libro?»', 'Pregunta', 'pre') +
-        gb('«{n}, quiero preguntar{le} algo: ¿qué es exactamente lo que {le} hace dudar de que {U:pueda|puedas} conseguirlo?»', 'Pregunta', 'pre') + silence)}
-    </div>`);
-
-  /* Diapositiva 7 · Objeciones de tiempo y dinero */
-  const tiempoDinero = slide(4, 'Objeciones de tiempo y dinero', 'Llamada – Objeciones de tiempo y dinero', `<div class="cols3w">
-    ${mc('NO TENGO TIEMPO',
+        gb('«{n}, quiero preguntar{le} algo: ¿qué es exactamente lo que {le} hace dudar de que {U:pueda|puedas} conseguirlo?»', 'Pregunta', 'pre') + silence);
+  const c_fec = mc('LA FECHA, COMO OPORTUNIDAD', gb('«{n}, nuestro próximo grupo comienza el {ini}. {U:Si decide incorporarse|Si decides incorporarte}, trabajaremos durante tres meses con el objetivo de que {su} libro esté publicado el {pub}, siempre que {U:cumpla|cumplas} con las actividades del programa. Además, si {U:reserva|reservas} ahora, {U:podrá|podrás} aprovechar las mentorías individuales adicionales que ofrecemos antes del inicio.»', 'Di'));
+  const c_tie = mc('NO TENGO TIEMPO',
       gb('«{n}, cuando me {U:dice|dices} que no {U:tiene|tienes} tiempo, ¿{U:se refiere|te refieres} a que {le} preocupa encontrar momentos para trabajar en {su} libro o a que no {U:podría|podrías} asistir a las mentorías?»', 'Pregunta', 'pre') +
       gb('«{n}, nuestro programa está diseñado precisamente para personas que tienen sus propias responsabilidades y necesitan avanzar en su libro sin dejar de lado sus actividades.\nEl trabajo es progresivo. Estimamos que, dedicándole aproximadamente una hora diaria, {U:puede|puedes} conseguir avances importantes.\nAdemás, las mentorías son espacios de acompañamiento disponibles, no clases de asistencia obligatoria. Tenemos horarios nocturnos y los sábados, para que {U:pueda|puedas} aprovecharlas según {sus} necesidades.\nAhora que {U:conoce|conoces} cómo está organizado el programa, ¿{U:considera|consideras} que {U:podría|podrías} reservar un espacio diario para trabajar en ese libro que tanto {U:desea|deseas} escribir?»', 'Respuesta') +
-      gb('«Claro, {n}. Por eso precisamente estamos aquí. Nuestra metodología está diseñada para que {U:pueda|puedas} escribir {su} libro paralelamente a {su} trabajo. ¿Cuál es la limitación que {U:encuentra|encuentras}?»', 'Versión corta', 'alt'))}
-    ${mc('«S/ 1.380 ES MUCHO DINERO PARA MÍ EN ESTE MOMENTO»',
-      gb('«{n}, entiendo que S/ 1.380 es una inversión importante. Pero quisiera que la {U:mire|mires} desde otra perspectiva.\n{U:Usted no está invirtiendo|Tú no estás invirtiendo} solamente en tres meses de acompañamiento. {U:Está invirtiendo|Estás invirtiendo} en hacer realidad un proyecto que {U:lleva|llevas} años queriendo realizar y para el que hasta ahora no {U:ha encontrado|has encontrado} el camino.\nAl finalizar, {U:tendrá|tendrás} su propio libro, escrito y publicado por {U:usted mism{G:o|a}|ti mism{G:o|a}}, con {su} nombre, {sus} experiencias y {sus} conocimientos. Y ese libro se queda {con} para toda la vida. Puede convertirse en una carta de presentación profesional, fortalecer {su} autoridad en lo que {U:conoce|conoces}, abrir{le} otras puertas y permitir{le} compartir {su} experiencia con muchas otras personas.\n{n}, quisiera preguntar{le} algo: ¿{U:cree|crees} que vale la pena hacer esta inversión para conseguirlo?»', 'Respuesta'))}
-    ${mc('ESTÁ CARO',
+      gb('«Claro, {n}. Por eso precisamente estamos aquí. Nuestra metodología está diseñada para que {U:pueda|puedas} escribir {su} libro paralelamente a {su} trabajo. ¿Cuál es la limitación que {U:encuentra|encuentras}?»', 'Versión corta', 'alt'));
+  const c_din = mc('«S/ 1.380 ES MUCHO DINERO PARA MÍ EN ESTE MOMENTO»',
+      gb('«{n}, entiendo que S/ 1.380 es una inversión importante. Pero quisiera que la {U:mire|mires} desde otra perspectiva.\n{U:Usted no está invirtiendo|Tú no estás invirtiendo} solamente en tres meses de acompañamiento. {U:Está invirtiendo|Estás invirtiendo} en hacer realidad un proyecto que {U:lleva|llevas} años queriendo realizar y para el que hasta ahora no {U:ha encontrado|has encontrado} el camino.\nAl finalizar, {U:tendrá|tendrás} {su} propio libro, escrito y publicado por {U:usted mism{G:o|a}|ti mism{G:o|a}}, con {su} nombre, {sus} experiencias y {sus} conocimientos. Y ese libro se queda {con} para toda la vida. Puede convertirse en una carta de presentación profesional, fortalecer {su} autoridad en lo que {U:conoce|conoces}, abrir{le} otras puertas y permitir{le} compartir {su} experiencia con muchas otras personas.\n{n}, quisiera preguntar{le} algo: ¿{U:cree|crees} que vale la pena hacer esta inversión para conseguirlo?»', 'Respuesta'));
+  const c_car = mc('ESTÁ CARO',
       gb('«¿Caro comparado con qué, {n}?»', 'Pregunta', 'pre') +
       gb('«{n}, ¿cuánto {U:pensó|pensaste} que costaría y qué {U:imaginaba|imaginabas} que incluía por ese precio?»', 'Si dice: «Pensé que costaba mucho menos»', 'alt') +
-      gb('«{n}, cuando me {U:dice|dices} que se sale de {su} presupuesto, ¿es porque en este momento realmente no {U:puede|puedes} destinar ese dinero o porque {U:había pensado|habías pensado} invertir una cantidad menor en {su} libro?»', 'Si dice que se sale de su presupuesto', 'alt'))}
-  </div>`);
-
-  /* Diapositiva 8 · Objeciones de decisión */
-  const decision = slide(5, 'Objeciones de decisión', 'Llamada – Objeciones de decisión', `<div class="cols2s"><div class="stk">
-    ${mc('LO VOY A PENSAR',
+      gb('«{n}, cuando me {U:dice|dices} que se sale de {su} presupuesto, ¿es porque en este momento realmente no {U:puede|puedes} destinar ese dinero o porque {U:había pensado|habías pensado} invertir una cantidad menor en {su} libro?»', 'Si dice que se sale de su presupuesto', 'alt'));
+  const c_pen = mc('LO VOY A PENSAR',
       gb('«Por mi experiencia, cuando una persona quiere escribir su libro, reconoce que nuestro programa puede ayudarla y considera que la inversión está a su alcance, pero aun así necesita pensarlo, normalmente es porque hay algo que todavía la detiene.\n{n}, ¿qué es lo que {U:a usted {G:lo|la}|a ti te} está deteniendo?»', 'Opción 1') +
-      gb('«{n}, {U:entiendo que necesite|entiendo que necesites} pensarlo. Yo también tendría mis dudas porque estamos hablando de un libro, ¡es un gran proyecto!\nSin embargo, no estamos aquí para que {U:confíe|confíes} solo en mi palabra sino para estar seguros de que este método puede ayudar{lo}.\n¿Cuál es {su} mayor duda?»', 'Opción 2'))}
-    ${mc('TENGO QUE EVALUARLO', gb('«{n}, comprendo que es una inversión que {U:debe|debes} evaluar.\nMe gustaría hacer{le} una pregunta: {U:usted lleva|tú llevas} varios años queriendo escribir {su} libro y todavía no {U:ha conseguido|has conseguido} hacerlo. ¿Qué otra alternativa {U:tiene|tienes} para conseguir escribirlo y publicarlo?»', 'Di'))}
-  </div><div class="stk">
-    ${mc('CONSULTAR CON MI PAREJA', gb('«Por supuesto, {n}. ¿{U:Su pareja está con usted|Tu pareja está contigo} en este momento? Si {U:le parece|te parece}, puedo explicar{le} yo misma cómo funciona nuestro programa y responder cualquier pregunta que tenga.»', 'Di'))}
-    ${mc('MÁNDEME LA PROPUESTA', gb('«Por supuesto, {n}, con mucho gusto {U:se|te} la envío. Solo quisiera hacer{le} una pregunta: en la propuesta {U:encontrará|encontrarás} exactamente toda la información que acabamos de conversar. ¿Qué {U:necesita|necesitas} revisar en el documento que todavía {le} está generando dudas?»', 'Di'))}
-  </div></div>`);
+      gb('«{n}, {U:entiendo que necesite|entiendo que necesites} pensarlo. Yo también tendría mis dudas porque estamos hablando de un libro, ¡es un gran proyecto!\nSin embargo, no estamos aquí para que {U:confíe|confíes} solo en mi palabra sino para estar seguros de que este método puede ayudar{lo}.\n¿Cuál es {su} mayor duda?»', 'Opción 2'));
+  const c_eva = mc('TENGO QUE EVALUARLO', gb('«{n}, comprendo que es una inversión que {U:debe|debes} evaluar.\nMe gustaría hacer{le} una pregunta: {U:usted lleva|tú llevas} varios años queriendo escribir {su} libro y todavía no {U:ha conseguido|has conseguido} hacerlo. ¿Qué otra alternativa {U:tiene|tienes} para conseguir escribirlo y publicarlo?»', 'Di'));
+  const c_par = mc('CONSULTAR CON MI PAREJA', gb('«Por supuesto, {n}. ¿{U:Su pareja está con usted|Tu pareja está contigo} en este momento? Si {U:le parece|te parece}, puedo explicar{le} yo misma cómo funciona nuestro programa y responder cualquier pregunta que tenga.»', 'Di'));
+  const c_pro = mc('MÁNDEME LA PROPUESTA', gb('«Por supuesto, {n}, con mucho gusto {U:se|te} la envío. Solo quisiera hacer{le} una pregunta: en la propuesta {U:encontrará|encontrarás} exactamente toda la información que acabamos de conversar. ¿Qué {U:necesita|necesitas} revisar en el documento que todavía {le} está generando dudas?»', 'Di'));
+  const c_c1 = mc('CIERRE POR TRANSFORMACIÓN', gb('«{n}, dejando de lado el temor que puede generar iniciar un proyecto tan importante, ¿qué {U:necesita|necesitas} para convencer{U:se|te} de que el momento de iniciar ha llegado?»', 'Di'));
+  const c_c2 = mc('CIERRE POR DECISIÓN', gb('«{n}, por todo lo que hemos conversado, considero que nuestro programa es lo que {U:usted necesita|tú necesitas} para escribir {su} libro. Nuestro próximo grupo comienza el {ini} y trabajamos con cupos limitados porque brindamos un acompañamiento personalizado. Solo nos quedan tres espacios. ¿{U:Le|Te} parece que aseguremos {su} participación con {su} reserva?»', 'Di'));
+  const c_c3 = mc('CIERRE POR EL SUEÑO PENDIENTE', gb('«{n}, {U:usted lleva|tú llevas} varios años queriendo escribir {su} libro y ahora {U:conoce|conoces} una metodología que puede ayudar{lo} a conseguirlo. Nuestro próximo grupo comienza el {ini}. Trabajamos con grupos de solo 10 personas para brindar un acompañamiento personalizado y nos quedan únicamente tres cupos disponibles. ¿Qué {le} parece si aprovechamos y comenzamos a trabajar en {su} libro de una vez?»', 'Di'));
+  const c_c4 = mc('CIERRE CON COMPROMISO', gb('«{n}, {U:usted tiene|tú tienes} las experiencias y los conocimientos que {U:quiere|quieres} compartir. Nosotras tenemos la metodología y el acompañamiento para ayudar{lo} a convertirlos en un libro. Nuestro próximo grupo comienza el {ini} y trabajamos con cupos limitados porque brindamos un acompañamiento personalizado. Solo nos quedan tres espacios. ¿{U:Le|Te} parece que aseguremos {su} participación con {su} reserva?»', 'Di'));
+  const c_c5 = mc('CIERRE POR SOLUCIÓN', gb('«{n}, {U:usted me comentó|tú me comentaste} que {su} principal dificultad era no saber por dónde empezar ni cómo organizar {sus} ideas. Ahora que {U:conoce|conoces} cómo vamos a ayudar{lo} a resolver esas dificultades, ¿{U:le parece|te parece} si comenzamos? Solo quedan tres cupos.»', 'Di'));
+  const c_c6 = mc('CIERRE POR CONFIRMACIÓN', gb('«{n}, ¿{U:considera|consideras} que nuestro programa es lo que {U:necesita|necesitas} para escribir y publicar {su} libro?»', 'Pregunta', 'pre') +
+      gb('«Perfecto. Entonces, ¿{U:le parece|te parece} que reservemos uno de los tres cupos que me quedan disponibles para el {ini}?»', 'Si responde que sí', 'alt'));
+  const contesto = `<article class="mc"><div class="mh"><h3>¿CONTESTÓ?</h3></div>
+      <div class="decrow">
+        <div class="dt yes"><b>Sí</b><span>→ Diagnóstico</span></div>
+        <div class="dt no"><b>No</b><span>→ Dejar sonar, sin mensaje de voz, y enviar el <a href="#" data-go="wa|wa-nunca">WhatsApp 1</a> en menos de 2 minutos</span></div>
+      </div></article>`;
+  const hechos = `<article class="mc"><div class="mh"><h3>TRES HECHOS REALES</h3></div><div class="facts1"><div class="fact"><b>INICIO</b><p>${T('El próximo grupo comienza el {iniY}')}</p></div><div class="fact"><b>RESERVA ANTICIPADA</b><p>Incluye hasta dos horas semanales de mentoría individual adicional, desde la reserva hasta el inicio del programa.</p></div><div class="fact"><b>META DEL GRUPO</b><p>${T('Publicación objetivo: {pubY}, condicionada al avance del autor y al cumplimiento de sus actividades.')}</p></div></div></article>`;
+  const stage = [['A', 'Conexión'], ['U', 'Diagnóstico'], ['T', 'Motivación y viabilidad'], ['O', 'Presentación'], ['R', 'Cierre']];
+  const flow = `<div class="flow" style="margin:0 0 18px">${stage.map((s, i) => `<span class="step"><i>${s[0]}</i>${s[1]}</span>${i < stage.length - 1 ? '<span class="arr">›</span>' : ''}`).join('')}</div>`;
 
-  /* Diapositiva 9 · Cierre de ventas */
-  const cierres = slide(6, 'Cierre de ventas', 'Llamada – Cierre de ventas', `<div class="cols3">
-    ${mc('CIERRE POR TRANSFORMACIÓN', gb('«{n}, dejando de lado el temor que puede generar iniciar un proyecto tan importante, ¿qué {U:necesita|necesitas} para convencer{U:se|te} de que el momento de iniciar ha llegado?»', 'Di'))}
-    ${mc('CIERRE POR DECISIÓN', gb('«{n}, por todo lo que hemos conversado, considero que nuestro programa es lo que {U:usted necesita|tú necesitas} para escribir {su} libro. Nuestro próximo grupo comienza el {ini} y trabajamos con cupos limitados porque brindamos un acompañamiento personalizado. Solo nos quedan tres espacios. ¿{U:Le|Te} parece que aseguremos {su} participación con {su} reserva?»', 'Di'))}
-    ${mc('CIERRE POR EL SUEÑO PENDIENTE', gb('«{n}, {U:usted lleva|tú llevas} varios años queriendo escribir {su} libro y ahora {U:conoce|conoces} una metodología que puede ayudar{lo} a conseguirlo. Nuestro próximo grupo comienza el {ini}. Trabajamos con grupos de solo 10 personas para brindar un acompañamiento personalizado y nos quedan únicamente tres cupos disponibles. ¿Qué {le} parece si aprovechamos y comenzamos a trabajar en {su} libro de una vez?»', 'Di'))}
-    ${mc('CIERRE CON COMPROMISO', gb('«{n}, {U:usted tiene|tú tienes} las experiencias y los conocimientos que {U:quiere|quieres} compartir. Nosotras tenemos la metodología y el acompañamiento para ayudar{lo} a convertirlos en un libro. Nuestro próximo grupo comienza el {ini} y trabajamos con cupos limitados porque brindamos un acompañamiento personalizado. Solo nos quedan tres espacios. ¿{U:Le|Te} parece que aseguremos {su} participación con {su} reserva?»', 'Di'))}
-    ${mc('CIERRE POR SOLUCIÓN', gb('«{n}, {U:usted me comentó|tú me comentaste} que {su} principal dificultad era no saber por dónde empezar ni cómo organizar {sus} ideas. Ahora que {U:conoce|conoces} cómo vamos a ayudar{lo} a resolver esas dificultades, ¿{U:le parece|te parece} si comenzamos? Solo quedan tres cupos.»', 'Di'))}
-    ${mc('CIERRE POR CONFIRMACIÓN', gb('«{n}, ¿{U:considera|consideras} que nuestro programa es lo que {U:necesita|necesitas} para escribir y publicar {su} libro?»', 'Pregunta', 'pre') +
-      gb('«Perfecto. Entonces, ¿{U:le parece|te parece} que reservemos uno de los tres cupos que me quedan disponibles para el {ini}?»', 'Si responde que sí', 'alt'))}
-  </div>`);
+  /* A · Conexión */
+  const A = block(0, 'A', 'Conexión', 'Llamada – Lo más pronto posible desde que se recibe el lead · Apertura · Momento 1: Encuadre',
+    `<div class="cols2s">${c_ap}<div class="stk">${contesto}${c_enc}</div></div>`);
+  /* U · Diagnóstico */
+  const U = block(1, 'U', 'Diagnóstico', 'Momento 2: Diagnóstico', `<div class="q2">${c_dia}</div>`);
+  /* T · Motivación y viabilidad */
+  const T3 = block(2, 'T', 'Motivación y viabilidad', 'Antes del precio: el costo de postergar · Momento 3: Resumir',
+    `<div class="stk"><div class="q2 q2b">${c_cal}</div>${c_res}</div>`);
+  /* O · Presentación */
+  const O = block(0, 'O', 'Presentación', 'Momento 4: Recomendar · Momento 5: Validar el valor · Hechos reales y la fecha',
+    `<div class="cols2s"><div class="stk">${c_rec}${c_val}</div><div class="stk">${hechos}${c_fec}</div></div>`);
+  /* R · Cierre */
+  const R1 = block(1, 'R', 'Cierre · Precio', 'Momento 6: Precio y cierre', c_pre);
+  const R2 = block(2, 'R', 'Cierre · Objeciones', 'Objeciones de tiempo y dinero · Objeciones de decisión',
+    `${subh('OBJECIONES DE TIEMPO Y DINERO')}<div class="cols3w">${c_tie}${c_din}${c_car}</div>
+     ${subh('OBJECIONES DE DECISIÓN')}<div class="cols2s"><div class="stk">${c_pen}${c_eva}</div><div class="stk">${c_par}${c_pro}</div></div>`);
+  const R3 = block(0, 'R', 'Cierre · Cierre de ventas', 'Cierre de ventas',
+    `<div class="cols3">${c_c1}${c_c2}${c_c3}${c_c4}${c_c5}${c_c6}</div>`);
 
-  return apertura + seis + costo + tiempoDinero + decision + cierres;
+  return flow + A + U + T3 + O + R1 + R2 + R3;
 }
 
 /* ===== Pestaña 3 · El seguimiento ===== */
 const SEG_A = [
   ['1 · SEGUIMIENTO (DÍA 1)',
     'Gracias por la conversación, {n}',
-    'Buenas tardes, {n}.\nFue un gusto conversar {con} y conocer {su} bonito proyecto y, sobre todo, el propósito que hay detrás de él.\nSoy {arq}, de Arquitectas de Autores Publicados.\nMe alegró mucho saber que {le} gustó nuestra propuesta y que {U:está|estás} animad{G:o|a} a hacer realidad {su} sueño de escribir y publicar {su} libro.\nEstoy segura de que, con nuestra metodología, {su} compromiso y nuestro acompañamiento, podemos hacer un gran trabajo juntos.\nComo quedamos, volveré a llamar{lo} para coordinar {su} reserva y los siguientes pasos.\n¡Será un gusto acompañar{lo} en este camino!'],
+    '{saludo}, {n}\nFue un gusto conversar {con} y conocer {su} bonito proyecto y, sobre todo, el propósito que hay detrás de él.\nSoy {arq}, de Arquitectas de Autores Publicados.\nMe alegró mucho saber que {le} gustó nuestra propuesta y que {U:está|estás} animad{G:o|a} a hacer realidad {su} sueño de escribir y publicar {su} libro.\nEstoy segura de que, con nuestra metodología, {su} compromiso y nuestro acompañamiento, podemos hacer un gran trabajo juntos.\nComo quedamos, volveré a llamar{lo} para coordinar {su} reserva y los siguientes pasos.\n¡Será un gusto acompañar{lo} en este camino!'],
   ['2 · SEGUIMIENTO (DÍA 2)',
     'Podemos comenzar con {su} libro desde ahora',
-    'Buenas tardes, {n}.\nFue un gusto conversar {con} y conocer {su} proyecto. Se nota cuánto significa este libro para {ti}. Gracias por compartirlo conmigo.\nPor lo que conversamos, estoy convencida de que nuestra metodología y acompañamiento pueden ayudar{lo} a hacerlo realidad. Como {le} comenté, nuestro próximo grupo comienza el {ini}. Sin embargo, no tenemos que esperar hasta esa fecha: desde que {U:realiza|realizas} {su} reserva podemos comenzar con mentorías individuales. Todavía tenemos dos semanas por delante que podemos aprovechar para avanzar en {su} libro.\n¿{U:Le|Te} parece si vamos avanzando con {su} reserva para que {U:pueda|puedas} comenzar a aprovechar las mentorías individuales desde ahora?'],
+    '{saludo}, {n}\nFue un gusto conversar {con} y conocer {su} proyecto. Se nota cuánto significa este libro para {ti}. Gracias por compartirlo conmigo.\nPor lo que conversamos, estoy convencida de que nuestra metodología y acompañamiento pueden ayudar{lo} a hacerlo realidad. Como {le} comenté, nuestro próximo grupo comienza el {ini}. Sin embargo, no tenemos que esperar hasta esa fecha: desde que {U:realiza|realizas} {su} reserva podemos comenzar con mentorías individuales. Todavía tenemos dos semanas por delante que podemos aprovechar para avanzar en {su} libro.\n¿{U:Le|Te} parece si vamos avanzando con {su} reserva para que {U:pueda|puedas} comenzar a aprovechar las mentorías individuales desde ahora?'],
   ['3 · SEGUIMIENTO (DÍA 5)',
     '¿Surgió algún inconveniente con {su} inscripción?',
-    'Buenas tardes, {n}.\nEn nuestra conversación {lo} noté muy entusiasmad{G:o|a} con comenzar a escribir {su} libro.\nComo no hemos podido volver a conversar, quisiera saber si ha surgido algún inconveniente que {le} esté impidiendo avanzar con {su} inscripción.\nNuestro próximo grupo comienza el {ini} y solo nos quedan tres cupos. Me gustaría mucho que {U:pudiera|pudieras} formar parte de este grupo, especialmente porque sé cuánto significa para {ti} escribir {su} libro.\n{n}, ¿hay algo que todavía {le} genere dudas o {le} esté impidiendo tomar la decisión?\nMe encantaría ayudar{lo}.'],
+    '{saludo}, {n}\nEn nuestra conversación {lo} noté muy entusiasmad{G:o|a} con comenzar a escribir {su} libro.\nNuestro próximo grupo comienza el {ini}, todavía tengo {su} lugar separado, ¿{U:quiere|quieres} que lo reserve para {ti}? Si no, lo liberaré para otros interesados.\nMe gustaría mucho que {U:pudiera|pudieras} formar parte de este grupo, especialmente porque sé cuánto significa para {ti} escribir {su} libro.'],
   ['4 · DEFINICIÓN (DÍA 7)',
-    'Cierre de {su} solicitud en Arquitectas de Autores',
-    'Muy buenas tardes, {n}.\nHe intentado comunicarme {con} después de nuestra conversación, pero no hemos logrado retomar el contacto. Me hubiera encantado acompañar{lo} en este proyecto, especialmente después de conocer cuánto significa para {ti} escribir {su} libro.\nComprendo que quizás este no sea el momento, así que, por ahora, daré por cerrado el seguimiento de {su} solicitud. {Lo} animo a no dejar ese sueño pendiente. ¡{Usted} sí {U:puede|puedes}! Cuando {U:tome|tomes} la decisión de emprenderlo, con gusto {lo} ayudo.\n{U:Le|Te} deseo éxitos. ¡{U:Le|Te} dejo un cordial saludo!']
+    'Quizás no sea el momento',
+    '{msaludo}, {n}\nHe intentado comunicarme {con} después de nuestra conversación, pero no hemos logrado retomar el contacto. Me hubiera encantado acompañar{lo} en este proyecto, especialmente después de conocer cuánto significa para {ti} escribir {su} libro.\nComprendo que quizás este no sea el momento, así que, por ahora, daré por cerrado el seguimiento de {su} solicitud. {Lo} animo a no dejar ese sueño pendiente. ¡{Usted} sí {U:puede|puedes}! Cuando {U:tome|tomes} la decisión de emprenderlo, con gusto {lo} ayudo.\n{U:Le|Te} deseo muchos éxitos. ¡{U:Le|Te} dejo un cordial saludo!']
 ];
 const SEG_B = [
   ['1 · PRESENTACIÓN (DÍA 0)',
-    'Sobre {su} solicitud de información para escribir y publicar {su} libro',
-    'Buenas tardes, {sr}. ¡Qué gusto saludar{lo}!\nAntes que nada, felicitaciones por el libro que {U:está|estás} pensando escribir.\nSoy {arq}, de Arquitectas de Autores Publicados. Acabo de llamar{lo} porque recibimos {su} solicitud de información y con mucho gusto podemos ayudar{lo} a escribir y publicar {su} libro.\n{U:Dígame|Dime}, ¿{U:le|te} viene mejor que conversemos hoy o {lo} vuelvo a llamar mañana?\nSe nota cuánto significa este libro para {ti}. Justamente por eso: ¿qué {le} falta para empezar el {ini}?'],
+    '{n}, ¿{U:le gustaría|te gustaría} hacer realidad el sueño de escribir {su} libro?',
+    '{saludo}, {sr}. ¡Qué gusto saludar{lo}!\nAntes que nada, felicitaciones por el libro que {U:está|estás} pensando escribir.\nSoy {arq}, de Arquitectas de Autores Publicados. Acabo de llamar{lo} porque recibimos {su} solicitud de información y con mucho gusto podemos ayudar{lo} a escribir y publicar {su} libro.\n{U:Dígame|Dime}, ¿{U:le|te} viene mejor que conversemos hoy o {lo} vuelvo a llamar mañana?'],
   ['2 · POSIBLE OBSTÁCULO (DÍA 2)',
-    'Intenté comunicarme {con}',
-    'Muy buenas tardes, {sr}.\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con} por teléfono, pero no logramos conversar.\n{U:Le|Te} cuento que en este camino he conocido a muchas personas que llevan años soñando con escribir su primer libro, pero no saben por dónde empezar. Si ese también es {su} caso, no {U:se preocupe|te preocupes}: nosotras conocemos la ruta y podemos ayudar{lo} a hacer realidad ese sueño.\n¿En qué momento {U:se encuentra|te encuentras} libre para que {le} explique cómo podemos ayudar{lo}?'],
+    '¿{U:Piensa|Piensas} en {su} libro y no {U:sabe|sabes} cuál es el siguiente paso?',
+    '{msaludo}, {sr}\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con} por teléfono, pero no logramos conversar.\n{U:Le|Te} cuento que en este camino he conocido a muchas personas que llevan años soñando con escribir su primer libro, pero no saben por dónde empezar. Si ese también es {su} caso, no {U:se preocupe|te preocupes}: nosotras conocemos la ruta y podemos ayudar{lo} a hacer realidad ese sueño.\n¿En qué momento {U:se encuentra|te encuentras} libre para que {le} explique cómo podemos ayudar{lo}?'],
   ['3 · DEFINICIÓN (DÍA 5)',
-    '¿Escribir {su} libro sigue siendo una prioridad?',
-    'Buenas tardes, {sr}.\nSoy {arq}, de Arquitectas de Autores Publicados. {Lo} volví a llamar, sin éxito.\nMe hubiera gustado explicar{le} cómo, con nuestra metodología y acompañamiento profesional, {lo} podemos guiar paso a paso durante todo el proceso para escribir {su} libro: desde {sus} ideas hasta la publicación en Amazon. Nuestro programa dura 12 semanas, empezamos el {ini} y los cupos son limitados.\n¿Escribir {su} libro sigue siendo una prioridad para {ti} o {U:prefiere|prefieres} dejar ese proyecto para más adelante?'],
+    '{U:Su|Tu} libro puede dejar de ser solo un sueño',
+    '{saludo}, {sr}\nSoy {arq}, de Arquitectas de Autores Publicados. {Lo} volví a llamar, sin éxito.\nMe hubiera gustado explicar{le} cómo, con nuestra metodología y acompañamiento profesional, {lo} podemos guiar paso a paso durante todo el proceso para escribir {su} libro: desde {sus} ideas hasta la publicación en Amazon. Nuestro programa dura 12 semanas, empezamos el {ini} y los cupos son limitados.\n¿Escribir {su} libro sigue siendo una prioridad para {ti} o {U:prefiere|prefieres} dejar ese proyecto para más adelante?'],
   ['4 · DEFINICIÓN (DÍA 7)',
-    'Cierre de {su} solicitud de información',
-    '{Sr}, muy buenas tardes.\nIntenté comunicarme {con} en varias oportunidades, pero no hemos logrado conversar. Quizás este no sea el momento de comenzar a trabajar en {su} libro, así que por ahora daré por cerrado el seguimiento a {su} solicitud. Si más adelante {U:toma|tomas} la decisión, {U:puede comunicarse|puedes comunicarte} con nosotras. {U:Le|Te} deseo muchos éxitos.\n\n{arq}\nArquitectas de Autores Publicados']
+    'Quizás no sea el momento',
+    '{Sr}, {msaludol}\nIntenté comunicarme {con} en varias oportunidades, pero no hemos logrado conversar. Quizás este no sea el momento de comenzar a trabajar en {su} libro, así que por ahora daré por cerrado el seguimiento a {su} solicitud. Si más adelante {U:toma|tomas} la decisión, {U:puede comunicarse|puedes comunicarte} con nosotras. {U:Le|Te} deseo muchos éxitos.\n\n{arq}\nArquitectas de Autores Publicados']
 ];
 const SIG = '\n\n{arq}\nArquitectas de Autores Publicados';
 
@@ -473,12 +484,15 @@ function go(tab, anchor) {
   else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function init() {
+  const h = new Date().getHours();
+  S.saludo = h < 12 ? 'd' : h < 19 ? 't' : 'n';
+  document.querySelector('input[name=saludo][value=' + S.saludo + ']').checked = true;
   const all = buildAll();
   Object.keys(all).forEach(k => { document.querySelector(`[data-panel="${k}"]`).innerHTML = all[k]; });
   refresh();
   const bind = (id, key, ev) => { const el = document.getElementById(id); el.addEventListener(ev, () => { S[key] = el.value; refresh(); }); };
   bind('f-nombre', 'nombre', 'input'); bind('f-fecha', 'fecha', 'input'); bind('f-arq', 'arq', 'change');
-  document.querySelectorAll('input[name=sexo],input[name=trato]').forEach(r => r.addEventListener('change', () => { S[r.name] = r.value; refresh(); }));
+  document.querySelectorAll('input[name=sexo],input[name=trato],input[name=saludo]').forEach(r => r.addEventListener('change', () => { S[r.name] = r.value; refresh(); }));
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => go(b.dataset.tab)));
   document.addEventListener('click', e => {
     const t = e.target.closest('button, a[data-go]');
