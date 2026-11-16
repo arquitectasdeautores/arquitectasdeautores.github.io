@@ -377,7 +377,8 @@ const SEG_A = [
 const SEG_B = [
   ['1 · PRESENTACIÓN (DÍA 0)',
     '{n}, ¿{U:le gustaría|te gustaría} hacer realidad el sueño de escribir {su} libro?',
-    '{saludo}, {sr}. ¡Qué gusto saludar{lo}!\nAntes que nada, felicitaciones por el libro que {U:está|estás} pensando escribir.\nSoy {arq}, de Arquitectas de Autores Publicados. Acabo de llamar{lo} porque recibimos {su} solicitud de información y con mucho gusto podemos ayudar{lo} a escribir y publicar {su} libro.\n{U:Dígame|Dime}, ¿{U:le|te} viene mejor que conversemos hoy o {lo} vuelvo a llamar mañana?'],
+    '{saludo}, {sr}. ¡Qué gusto saludar{lo}!\nSoy {arq}, fundadora de Arquitectas de Autores Publicados.\n¡Claro que podemos ayudar{le}! Precisamente nos dedicamos a acompañar a personas que desean transformar sus conocimientos, experiencias o ideas en un libro publicado.\nMe gustaría conocer un poco más sobre {su} proyecto para orientar{lo} mejor. Acabo de llamar{lo}, pero no logré ubicar{lo}. {U:Dígame|Dime}, ¿{le} viene mejor que conversemos hoy o {lo} vuelvo a llamar mañana?',
+    '{saludo}, {sr}. ¡Qué gusto saludar{lo}!\nSoy {arq}, fundadora de Arquitectas de Autores Publicados.\n¡Claro que podemos ayudar{le}! Precisamente nos dedicamos a acompañar a personas que desean transformar sus conocimientos, experiencias o ideas en un libro publicado.\nMe gustaría conocer un poco más sobre {su} proyecto para orientar{lo} mejor. {U:Le|Te} escribo porque acabo de llamar{lo}, pero no logré ubicar{lo}. {U:Dígame|Dime}, ¿{le} viene mejor que conversemos hoy o {lo} vuelvo a llamar mañana?'],
   ['2 · POSIBLE OBSTÁCULO (DÍA 2)',
     '¿{U:Piensa|Piensas} en {su} libro y no {U:sabe|sabes} cuál es el siguiente paso?',
     '{msaludo}, {sr}\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con} por teléfono, pero no logramos conversar.\n{U:Le|Te} cuento que en este camino he conocido a muchas personas que llevan años soñando con escribir su primer libro, pero no saben por dónde empezar. Si ese también es {su} caso, no {U:se preocupe|te preocupes}: nosotras conocemos la ruta y podemos ayudar{lo} a hacer realidad ese sueño.\n¿En qué momento {U:se encuentra|te encuentras} libre para que {le} explique cómo podemos ayudar{lo}?'],
@@ -400,7 +401,7 @@ const BREVES = [
 ];
 
 function seguimiento(mode) {
-  const grid = (items) => `<div class="msgs">${items.map(it => card(it[0], mode === 'wa' ? wa(it[2]) : mail(it[1], it[2] + (it[0].startsWith('4') && it[2].indexOf('Arquitectas de Autores Publicados') > -1 ? '' : SIG)))).join('')}</div>`;
+  const grid = (items) => `<div class="msgs">${items.map(it => card(it[0], mode === 'wa' ? wa(it[2]) : mail(it[1], (it[3] || it[2]) + (it[0].startsWith('4') && it[2].indexOf('Arquitectas de Autores Publicados') > -1 ? '' : SIG)))).join('')}</div>`;
   const head = (id, n, title, sub) => `<div class="sh" id="${id}"><span class="sn">${n}</span><div><h2>${title}</h2><p>${sub}</p></div></div>`;
   const tag = mode === 'wa' ? 'WhatsApp' : 'correo';
   return `<section class="blk blk1">${head(mode + '-interes', 1, 'Cliente mostró interés, pero dejó de responder', 'Seguimiento por ' + tag + ' · días 1, 2, 5 y 7')}${grid(SEG_A)}</section>
