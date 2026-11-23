@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>¡Tu lugar está reservado! – Arquitectas de Autores Publicados</title>
+<style>
+html,body,div,section,article,main,header,footer,p,h1,h2,ul,li,a{margin:0!important;padding:0!important;box-sizing:border-box!important}
+html{overflow-x:hidden!important}
+
+:root{
+  --navy:#0B1D3A;
+  --gold:#C9973C;
+  --ivory:#FBFAF6;
+  --line:#DEC18D;
+  --text:#11233f;
+}
+
+body{
+  background:#FBFAF6!important;
+  background-image:radial-gradient(circle at 12% 10%,rgba(201,151,60,.10),transparent 26%),radial-gradient(circle at 78% 8%,rgba(201,151,60,.08),transparent 28%)!important;
+  color:var(--navy)!important;
+  font-family:"Montserrat","Avenir Next",Arial,sans-serif!important;
+  min-height:100vh!important;
+  display:flex!important;
+  flex-direction:column!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+
+.wrap{
+  flex:1!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:32px 16px 40px!important;
+  width:100%!important;
+}
+
+.card{
+  background:rgba(255,255,255,.80)!important;
+  border:1px solid rgba(201,151,60,.40)!important;
+  border-radius:10px!important;
+  padding:36px 40px!important;
+  width:100%!important;
+  max-width:480px!important;
+  box-shadow:0 12px 40px rgba(11,29,58,.09)!important;
+  text-align:center!important;
+}
+
+.logo{width:140px!important;display:block!important;margin:0 auto 20px!important;}
+
+.spark{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:10px!important;color:var(--gold)!important;font-size:12px!important;margin:0 0 14px!important;
+}
+.spark:before,.spark:after{content:""!important;display:block!important;width:50px!important;height:1px!important;background:var(--gold)!important;opacity:.7!important;}
+
+h1{
+  font-family:"Cormorant Garamond","Playfair Display",Georgia,serif!important;
+  font-size:28px!important;line-height:1.05!important;
+  text-transform:uppercase!important;color:var(--navy)!important;
+  margin:0 0 6px!important;letter-spacing:.04em!important;font-weight:700!important;
+}
+.gold{color:var(--gold)!important;}
+
+.nombre{
+  font-family:Georgia,serif!important;font-size:15px!important;
+  color:var(--gold)!important;margin:4px 0 12px!important;font-style:italic!important;
+  display:block!important;
+}
+.card-text{
+  font-family:Georgia,serif!important;font-size:13px!important;
+  color:#19304e!important;line-height:1.6!important;margin:0 0 0!important;
+}
+
+.divider{height:1px!important;background:linear-gradient(90deg,transparent,var(--line),transparent)!important;margin:22px 0!important;}
+
+.steps-title{
+  font-size:10px!important;letter-spacing:.18em!important;text-transform:uppercase!important;
+  color:var(--navy)!important;opacity:.65!important;margin:0 0 14px!important;font-weight:600!important;
+  display:block!important;
+}
+.steps{display:flex!important;flex-direction:column!important;gap:12px!important;text-align:left!important;margin:0 0 24px!important;}
+.step{display:flex!important;align-items:flex-start!important;gap:12px!important;}
+.step-num{
+  width:22px!important;height:22px!important;border-radius:50%!important;
+  border:1px solid var(--gold)!important;color:var(--gold)!important;
+  font-size:11px!important;font-weight:700!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;margin-top:1px!important;
+}
+.step-text{font-size:12px!important;line-height:1.55!important;color:#19304e!important;}
+.step-text strong{color:var(--navy)!important;font-weight:600!important;}
+
+.btn-wa{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:10px!important;background:#25D366!important;color:#fff!important;
+  border-radius:6px!important;padding:12px 20px!important;font-size:12px!important;
+  letter-spacing:.08em!important;font-weight:600!important;
+  margin:0!important;width:100%!important;
+  font-family:inherit!important;text-decoration:none!important;
+}
+.btn-wa:hover{opacity:.88!important;}
+
+.foot{
+  text-align:center!important;padding:16px 20px!important;font-size:10px!important;
+  letter-spacing:.08em!important;color:#aab!important;
+  border-top:1px solid rgba(201,151,60,.20)!important;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <img class="logo" src="https://assets.cdn.filesafe.space/x4KFf0DMn9gQJ5xjhHaR/media/6a290a39dca942f7b3dc1456.png" alt="Arquitectas de Autores Publicados"/>
+    <div class="spark">✦</div>
+    <h1>¡Tu lugar<br><span class="gold">está reservado!</span></h1>
+    <span class="nombre" id="saludo"></span>
+    <p class="card-text">Gracias por inscribirte. Tu historia merece existir.</p>
+
+    <div class="divider"></div>
+
+    <span class="steps-title">Tus próximos pasos</span>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Confirma tu pago por WhatsApp.</strong> Envíanos tu comprobante para activar tu acceso.</div>
+      </div>
+    </div>
+
+    <a id="btn-confirmar" class="btn-wa" href="#" target="_blank" rel="noopener">
+      📲 Confirmar mi pago por WhatsApp
+    </a>
+  </div>
+</div>
+
+<div class="foot">© 2026 Arquitectas de Autores Publicados · Todos los derechos reservados</div>
+
+<script>
+var nombre = sessionStorage.getItem('arq_nombre');
+var correo  = sessionStorage.getItem('arq_correo');
+var wa      = sessionStorage.getItem('arq_whatsapp');
+if(nombre) document.getElementById('saludo').textContent = '¡Bienvenida, ' + nombre + '!';
+var mensaje = encodeURIComponent(
+  '¡Hola! Me acabo de inscribir al programa La Incubadora de Autores.\n\n' +
+  '• Mi nombre es: ' + (nombre||'') + '\n\n' +
+  'Te comparto mi comprobante de pago.'
+);
+document.getElementById('btn-confirmar').href = 'https://wa.me/51912085728?text=' + mensaje;
+</script>
+</body>
+</html>
