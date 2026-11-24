@@ -132,7 +132,7 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
 @media(max-width:700px){.cols3,.two,.two.even,.facts{grid-template-columns:1fr}.tabs{gap:18px}}
 
 /* ===== Proforma ===== */
-.pf-tools{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:end}
+.pf-tools{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:end}
 .pf-act{align-self:end}
 .pf-act .pf-btn{width:100%;padding:10px 8px;height:38px;margin:0}
 .pf-tools .full{grid-column:1/-1}
@@ -184,6 +184,7 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
 .pf-bonus{margin-top:14px;background:var(--cream);border:1px solid var(--gold);border-radius:8px;padding:12px 14px}
 .pf-bonus span{display:block;font-size:11px;letter-spacing:.1em;font-weight:700;color:var(--gold-d);margin-bottom:4px}
 .pf-bonus p{margin:0 0 4px}
+.pf-b3t{font-weight:700;color:var(--navy);margin:8px 0 2px!important}.pf-b3{margin:0;padding-left:18px}.pf-b3 li{margin:0 0 2px;line-height:1.35}
 .pf-bonus .pf-bh{font-weight:700;color:var(--teal);margin:6px 0 0}
 .pf-cupos{margin-top:12px;padding:10px 14px;background:var(--tealsoft);border-radius:8px}
 .pf-cupos p{margin:0}
@@ -250,6 +251,7 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
 .ct-b .pf-req p{grid-column:2}
 .ct-b .pf-req svg{width:17px;height:17px;margin:1px 0 0;grid-column:1;grid-row:1/span 2}
 .ct-b .pf-req p{font-size:11px;line-height:1.4;margin:0 0 2px}
+.pf-igv{margin:5px 0 0!important;font-size:11px!important;font-style:italic;color:var(--slate);text-align:left!important}
 .ct-ok{margin-top:12px!important}
 .ct-img{margin-top:12px}
 .ct-img p{font-size:12px}
@@ -292,7 +294,7 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
       <label><input type="radio" name="saludo" value="n"><span>Buenas noches</span></label></div></div>
     <div class="fld"><label for="f-fecha">Inicio del programa</label><input type="date" id="f-fecha" value="2026-12-04"></div>
     <div class="fld"><label for="f-arq">Arquitecta</label><select id="f-arq"><option>Jaqueline Rincón</option><option selected>Consuelo Alarcón</option></select></div>
-    <p class="hint">La fecha de publicación objetivo se calcula sola: 93 días después del inicio (del 4 de diciembre de 2026 al 7 de marzo de 2027).</p>
+    <p class="hint" id="hint-pub"></p>
   </section>
 
   <nav class="tabs" role="tablist">
@@ -313,6 +315,7 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
       <div class="pf-tools">
         <div class="fld"><label for="pf-fecha">Fecha</label><input type="date" id="pf-fecha"></div>
         <div class="fld"><label for="pf-modo">Mentoría</label><select id="pf-modo"><option value="g" selected>Grupal</option><option value="i">Individual</option></select></div>
+        <div class="fld"><label for="pf-sem">Duración</label><select id="pf-sem"><option value="4">4 semanas</option><option value="8">8 semanas</option><option value="12" selected>12 semanas</option><option value="16">16 semanas</option><option value="20">20 semanas</option><option value="24">24 semanas</option></select></div>
         <div class="fld"><label for="pf-horas">Horas</label><select id="pf-horas"><option value="4">4 horas</option><option value="6">6 horas</option><option value="8">8 horas</option><option value="10">10 horas</option><option value="12">12 horas</option><option value="15">15 horas</option><option value="20">20 horas</option><option value="24">24 horas</option><option value="30">30 horas</option><option value="40">40 horas</option><option value="50" selected>50 horas</option><option value="60">60 horas</option><option value="80">80 horas</option><option value="100">100 horas</option></select></div>
         <div class="fld"><label for="pf-sep">Separación (S/)</label><input type="number" id="pf-sep" min="0" step="10" value="270"></div>
         <div class="fld"><label for="pf-cuota">Cuota ×3 (S/)</label><input type="number" id="pf-cuota" min="0" step="10" value="370"></div>
@@ -352,7 +355,7 @@ function tokens() {
   const f = S.sexo === 'F', u = S.trato === 'U';
   const nom = (S.nombre || '').trim() || '[Nombre]';
   const ini = parseD(S.fecha);
-  const pub = ini ? new Date(ini.getTime() + 93 * 86400000) : null;
+  const pub = pubOf(ini);
   const sr = (f ? 'señora ' : 'señor ') + nom;
   return {
     n: V(nom),
@@ -364,6 +367,9 @@ function tokens() {
     iniY: V(ini ? fmtD(ini, true) : '[fecha de inicio]'),
     pub: V(pub ? fmtD(pub, false) : '[fecha de publicación]'),
     pubY: V(pub ? fmtD(pub, true) : '[fecha de publicación]'),
+    sem: V(String(S.pf.sem)),
+    mes: V(MES_W[S.pf.sem / 4]),
+    mesp: V(S.pf.sem === 4 ? 'el próximo mes' : 'los próximos ' + MES_W[S.pf.sem / 4]),
     tot: V(soles(S.pf.sep + 3 * S.pf.cuota)),
     sep: V(soles(S.pf.sep)),
     cuo: V(soles(S.pf.cuota)),
@@ -466,20 +472,20 @@ function buildLlamada() {
   const c_res = mc('RESUMIR', gb('«{n}, por lo que me {U:ha contado|has contado}, {U:lleva|llevas} varios años con la ilusión de escribir {su} libro. {U:Tiene|Tienes} la intención de ayudar a otros a partir de {sus} vivencias, {U:quiere|quieres} dejar un legado, pero todavía no {U:ha encontrado|has encontrado} la manera de organizar {sus} ideas y avanzar. ¿Es así?»', 'Di · ejemplo, adáptalo a lo que contó'), 3);
   const c_rec = mc('RECOMENDAR', gb('{n}, por lo que me {U:ha contado|has contado}, estoy convencida de que podemos ayudar{lo} a escribir {su} libro.\nNuestro programa se basa en una metodología que ya ha ayudado a cientos de personas a escribir sus libros.\nEs un proceso organizado, paso a paso, que comienza con {sus} ideas y experiencias, continúa con la estructura y el desarrollo de los capítulos y termina con la preparación y publicación de {su} libro en Amazon. Todo este camino no lo {U:recorre|recorres} {G:solo|sola}. Nosotras supervisamos {sus} avances, resolvemos {sus} dudas y {lo} orientamos durante todo el proceso.', 'Di'), 4);
   const c_val = mc('VALIDAR EL VALOR – VISIBILIZAR EL COSTO DE POSTERGAR', gb('«¿Esta es la ayuda que {U:estaba|estabas} buscando?»', 'Pregunta', 'pre') + silence + gb('«¿Qué parte del acompañamiento {le} serviría más?»', 'Si responde que sí', 'alt'), 5);
-  const c_pre = mc('PRECIO Y CIERRE', gb('«Para trabajar conmigo y con mi equipo durante los próximos tres meses, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo {tot}. {U:Puede|Puedes} pagarla en cuatro partes: {sep} para reservar {su} cupo y tres cuotas mensuales de {cuo}.»', 'Di') + silence, 6);
+  const c_pre = mc('PRECIO Y CIERRE', gb('«Para trabajar conmigo y con mi equipo durante {mesp}, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo {tot}. {U:Puede|Puedes} pagarla en cuatro partes: {sep} para reservar {su} cupo y tres cuotas mensuales de {cuo}.»', 'Di') + silence, 6);
   const c_cal = mc('QUE LA PERSONA CALCULE: PREGUNTE Y CALLE',
         gb('«{n}, me {U:ha contado|has contado} que {U:quiere|quieres} compartir {sus} experiencias para ayudar a otras personas a través de {sus} vivencias y dejar un legado, ¿qué tan importante para {ti} es escribir {su} libro ahora?\nYa {U:esperó|esperaste} x años. Si pasa un año más sin escribirlo, ¿cómo {U:se sentiría|te sentirías}?\n¿Qué {U:cree|crees} que tendría que cambiar para que {U:deje|dejes} de ser un proyecto pendiente?»', 'Pregunta', 'pre') +
         gb('«{n}, hasta ahora no {U:había podido|habías podido} escribir {su} libro porque no {U:sabía|sabías} dónde empezar ni cómo organizar {sus} ideas. Si {U:encontrara|encontraras} un programa que {lo} lleve paso a paso y personas que {lo} acompañen durante el proceso, y que además estuviera al alcance de {su} presupuesto, ¿qué {le} impediría tomarlo?', 'Pregunta', 'pre') +
         gb('«{n}, si ya {U:tiene|tienes} claro qué libro {U:quiere|quieres} escribir y ahora {U:conoce|conoces} una forma de hacerlo, ¿qué {U:considera|consideras} que {le} falta para decidir{U:se|te} a comenzar?»', 'Pregunta', 'pre') +
         gb('«De todo lo que hemos conversado, ¿hay alguna parte del proceso que todavía {le} haga dudar de que {U:pueda|puedas} terminar {su} libro?»', 'Pregunta', 'pre') +
         gb('«{n}, quiero preguntar{le} algo: ¿qué es exactamente lo que {le} hace dudar de que {U:pueda|puedas} conseguirlo?»', 'Pregunta', 'pre') + silence);
-  const c_fec = mc('LA FECHA, COMO OPORTUNIDAD', gb('«{n}, nuestro próximo grupo comienza el {ini}. {U:Si decide incorporarse|Si decides incorporarte}, trabajaremos durante tres meses con el objetivo de que {su} libro esté publicado el {pub}, siempre que {U:cumpla|cumplas} con las actividades del programa. Además, si {U:reserva|reservas} ahora, {U:podrá|podrás} aprovechar las mentorías individuales adicionales que ofrecemos antes del inicio.»', 'Di'));
+  const c_fec = mc('LA FECHA, COMO OPORTUNIDAD', gb('«{n}, nuestro próximo grupo comienza el {ini}. {U:Si decide incorporarse|Si decides incorporarte}, trabajaremos durante {mes} con el objetivo de que {su} libro esté publicado el {pub}, siempre que {U:cumpla|cumplas} con las actividades del programa. Además, si {U:reserva|reservas} ahora, {U:podrá|podrás} aprovechar las mentorías individuales adicionales que ofrecemos antes del inicio.»', 'Di'));
   const c_tie = mc('NO TENGO TIEMPO',
       gb('«{n}, cuando me {U:dice|dices} que no {U:tiene|tienes} tiempo, ¿{U:se refiere|te refieres} a que {le} preocupa encontrar momentos para trabajar en {su} libro o a que no {U:podría|podrías} asistir a las mentorías?»', 'Pregunta', 'pre') +
       gb('«{n}, nuestro programa está diseñado precisamente para personas que tienen sus propias responsabilidades y necesitan avanzar en su libro sin dejar de lado sus actividades.\nEl trabajo es progresivo. Estimamos que, dedicándole aproximadamente una hora diaria, {U:puede|puedes} conseguir avances importantes.\nAdemás, las mentorías son espacios de acompañamiento disponibles, no clases de asistencia obligatoria. Tenemos horarios nocturnos y los sábados, para que {U:pueda|puedas} aprovecharlas según {sus} necesidades.\nAhora que {U:conoce|conoces} cómo está organizado el programa, ¿{U:considera|consideras} que {U:podría|podrías} reservar un espacio diario para trabajar en ese libro que tanto {U:desea|deseas} escribir?»', 'Respuesta') +
       gb('«Claro, {n}. Por eso precisamente estamos aquí. Nuestra metodología está diseñada para que {U:pueda|puedas} escribir {su} libro paralelamente a {su} trabajo. ¿Cuál es la limitación que {U:encuentra|encuentras}?»', 'Versión corta', 'alt'));
   const c_din = mc('«{tot} ES MUCHO DINERO PARA MÍ EN ESTE MOMENTO»',
-      gb('«{n}, entiendo que {tot} es una inversión importante. Pero quisiera que la {U:mire|mires} desde otra perspectiva.\n{U:Usted no está invirtiendo|Tú no estás invirtiendo} solamente en tres meses de acompañamiento. {U:Está invirtiendo|Estás invirtiendo} en hacer realidad un proyecto que {U:lleva|llevas} años queriendo realizar y para el que hasta ahora no {U:ha encontrado|has encontrado} el camino.\nAl finalizar, {U:tendrá|tendrás} {su} propio libro, escrito y publicado por {U:usted mism{G:o|a}|ti mism{G:o|a}}, con {su} nombre, {sus} experiencias y {sus} conocimientos. Y ese libro se queda {con} para toda la vida. Puede convertirse en una carta de presentación profesional, fortalecer {su} autoridad en lo que {U:conoce|conoces}, abrir{le} otras puertas y permitir{le} compartir {su} experiencia con muchas otras personas.\n{n}, quisiera preguntar{le} algo: ¿{U:cree|crees} que vale la pena hacer esta inversión para conseguirlo?»', 'Respuesta'));
+      gb('«{n}, entiendo que {tot} es una inversión importante. Pero quisiera que la {U:mire|mires} desde otra perspectiva.\n{U:Usted no está invirtiendo|Tú no estás invirtiendo} solamente en {mes} de acompañamiento. {U:Está invirtiendo|Estás invirtiendo} en hacer realidad un proyecto que {U:lleva|llevas} años queriendo realizar y para el que hasta ahora no {U:ha encontrado|has encontrado} el camino.\nAl finalizar, {U:tendrá|tendrás} {su} propio libro, escrito y publicado por {U:usted mism{G:o|a}|ti mism{G:o|a}}, con {su} nombre, {sus} experiencias y {sus} conocimientos. Y ese libro se queda {con} para toda la vida. Puede convertirse en una carta de presentación profesional, fortalecer {su} autoridad en lo que {U:conoce|conoces}, abrir{le} otras puertas y permitir{le} compartir {su} experiencia con muchas otras personas.\n{n}, quisiera preguntar{le} algo: ¿{U:cree|crees} que vale la pena hacer esta inversión para conseguirlo?»', 'Respuesta'));
   const c_car = mc('ESTÁ CARO',
       gb('«¿Caro comparado con qué, {n}?»', 'Pregunta', 'pre') +
       gb('«{n}, ¿cuánto {U:pensó|pensaste} que costaría y qué {U:imaginaba|imaginabas} que incluía por ese precio?»', 'Si dice: «Pensé que costaba mucho menos»', 'alt') +
@@ -551,10 +557,10 @@ const SEG_B = [
     '{saludo}, {sr}. ¡Qué gusto saludar{lo}!\nSoy {arq}, fundadora de Arquitectas de Autores Publicados.\n¡Claro que podemos ayudar{le}! Precisamente nos dedicamos a acompañar a personas que desean transformar sus conocimientos, experiencias o ideas en un libro publicado.\nMe gustaría conocer un poco más sobre {su} proyecto para orientar{lo} mejor. {U:Le|Te} escribo porque acabo de llamar{lo}, pero no logré ubicar{lo}. {U:Dígame|Dime}, ¿{le} viene mejor que conversemos hoy o {lo} vuelvo a llamar mañana?'],
   ['2 · POSIBLE OBSTÁCULO (DÍA 2)',
     '¿{U:Piensa|Piensas} en {su} libro y no {U:sabe|sabes} cuál es el siguiente paso?',
-    '{msaludo}, {sr}\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con} por teléfono, pero no logramos conversar.\n{U:Le|Te} cuento que en este camino he conocido a muchas personas que llevan años soñando con escribir su primer libro, pero no saben por dónde empezar. Si ese también es {su} caso, {U:no se preocupe|no te preocupes}: nosotras conocemos la ruta y podemos ayudar{lo} a hacer realidad ese sueño.\n{Lo} guiaremos paso a paso, desde {sus} primeras ideas hasta la publicación de {su} libro en Amazon KDP. No {U:necesita|necesitas} ser {G:escritor|escritora} ni dedicarle mucho tiempo.\n{U:Usted|Tú} {G:mismo|misma} {U:escribirá|escribirás} {su} libro, pero no {U:estará|estarás} {G:solo|sola}: {U:contará|contarás} con nuestro apoyo permanente durante todo el proceso.\nNuestro programa dura 12 semanas e incluye {hrs} horas de mentoría personalizada.\n¿En qué momento {U:se encuentra|te encuentras} libre para que {le} explique cómo podemos ayudar{lo}?'],
+    '{msaludo}, {sr}\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con} por teléfono, pero no logramos conversar.\n{U:Le|Te} cuento que en este camino he conocido a muchas personas que llevan años soñando con escribir su primer libro, pero no saben por dónde empezar. Si ese también es {su} caso, {U:no se preocupe|no te preocupes}: nosotras conocemos la ruta y podemos ayudar{lo} a hacer realidad ese sueño.\n{Lo} guiaremos paso a paso, desde {sus} primeras ideas hasta la publicación de {su} libro en Amazon KDP. No {U:necesita|necesitas} ser {G:escritor|escritora} ni dedicarle mucho tiempo.\n{U:Usted|Tú} {G:mismo|misma} {U:escribirá|escribirás} {su} libro, pero no {U:estará|estarás} {G:solo|sola}: {U:contará|contarás} con nuestro apoyo permanente durante todo el proceso.\nNuestro programa dura {sem} semanas e incluye {hrs} horas de mentoría personalizada.\n¿En qué momento {U:se encuentra|te encuentras} libre para que {le} explique cómo podemos ayudar{lo}?'],
   ['3 · DEFINICIÓN (DÍA 5)',
     '{U:Su|Tu} libro puede dejar de ser solo un sueño',
-    '{saludo}, {sr}:\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con}, pero no logramos conversar.\nPara muchas personas, escribir un libro es uno de los proyectos más importantes de su vida. Sin embargo, sin una estructura, el proceso resulta complejo. En Arquitectas de Autores Publicados contamos con una metodología que ya ha ayudado a cientos de personas a convertirse en autores. Nosotras {le} facilitamos el camino y {lo} ayudamos a recorrerlo con claridad y dirección y, sobre todo, a disfrutar de cada etapa sin descuidar {sus} actividades diarias.\nHoy, muchas personas escriben sus propios libros, aun sin ser escritores ni dedicarles mucho tiempo, solo porque encontraron la ruta adecuada.\nMe hubiera gustado explicar{le} cómo trabajamos y de qué manera podemos guiar{lo}, desde {sus} primeras ideas hasta la publicación de {su} libro en Amazon KDP.\nNuestro programa dura 12 semanas e incluye {hrs} horas de mentoría en grupos reducidos. El próximo grupo comienza el {ini} y los cupos son limitados.\nSi escribir {su} libro sigue siendo una prioridad para {ti}, {U:escríbame|escríbeme}. Con gusto podemos explicar{le} cómo {lo} ayudaremos a alcanzar esa meta.'],
+    '{saludo}, {sr}:\nSoy {arq}, de Arquitectas de Autores Publicados. Intenté comunicarme nuevamente {con}, pero no logramos conversar.\nPara muchas personas, escribir un libro es uno de los proyectos más importantes de su vida. Sin embargo, sin una estructura, el proceso resulta complejo. En Arquitectas de Autores Publicados contamos con una metodología que ya ha ayudado a cientos de personas a convertirse en autores. Nosotras {le} facilitamos el camino y {lo} ayudamos a recorrerlo con claridad y dirección y, sobre todo, a disfrutar de cada etapa sin descuidar {sus} actividades diarias.\nHoy, muchas personas escriben sus propios libros, aun sin ser escritores ni dedicarles mucho tiempo, solo porque encontraron la ruta adecuada.\nMe hubiera gustado explicar{le} cómo trabajamos y de qué manera podemos guiar{lo}, desde {sus} primeras ideas hasta la publicación de {su} libro en Amazon KDP.\nNuestro programa dura {sem} semanas e incluye {hrs} horas de mentoría en grupos reducidos. El próximo grupo comienza el {ini} y los cupos son limitados.\nSi escribir {su} libro sigue siendo una prioridad para {ti}, {U:escríbame|escríbeme}. Con gusto podemos explicar{le} cómo {lo} ayudaremos a alcanzar esa meta.'],
   ['4 · DEFINICIÓN (DÍA 7)',
     'Quizás no sea el momento',
     '{Sr}, {msaludol}\nIntenté comunicarme {con} en varias oportunidades, pero no hemos logrado conversar. Quizás este no sea el momento de comenzar a trabajar en {su} libro, así que por ahora daré por cerrado el seguimiento a {su} solicitud. Si más adelante {U:toma|tomas} la decisión, {U:puede comunicarse|puedes comunicarte} con nosotras. {U:Le|Te} deseo muchos éxitos.\n\n{arq}\nArquitectas de Autores Publicados']
@@ -564,9 +570,9 @@ const SIG = '\n\n{arq}\nArquitectas de Autores Publicados';
 const BREVES = [
   ['«¿DE QUÉ SE TRATA?»', '{Sr}:\nCon nuestro programa, {U:usted podrá|tú podrás} escribir y publicar {su} propio libro, aunque hoy no {U:sepa|sepas} por dónde empezar.\nNo es un taller ni un curso de escritura. Trabajamos con una metodología que ya ha ayudado a cientos de personas a convertirse en autores y, con nuestro acompañamiento profesional, {U:usted también podrá|tú también podrás} lograrlo.\n{U:Usted aporta|Tú aportas} {sus} vivencias o conocimientos y {U:se dedica|te dedicas} a desarrollar {su} libro, mientras nosotras {lo} guiamos paso a paso durante todo el proceso.\n¿{U:Le|Te} viene bien que conversemos hoy o mañana por la mañana?'],
   ['«ENVÍEME LA INFORMACIÓN»', 'Con mucho gusto, {sr}.\n{U:Le|Te} compartiré nuestra propuesta, donde {U:encontrará|encontrarás} las etapas del programa, cómo funciona el acompañamiento, los horarios y la inversión. Sin embargo, hay algo importante: cada autor tiene un proyecto diferente y nuestra metodología está diseñada para trabajar a partir de sus propias ideas, experiencias y conocimientos. Por eso me gustaría conocer qué libro {U:tiene|tienes} pensado escribir, para explicar{le} cómo podemos ayudar{lo} específicamente en {su} caso.\n¿{U:Le|Te} viene bien que conversemos hoy o mañana por la mañana?'],
-  ['«¿ME DA TODA LA INFORMACIÓN POR AQUÍ?»', 'Con mucho gusto, {sr}.\nPara muchas personas, escribir un libro es uno de los proyectos más importantes de su vida. Sin embargo, si no se sabe por dónde empezar ni qué ruta seguir, el proceso puede resultar complejo.\nEn Arquitectas de Autores Publicados contamos con una metodología que ya ha ayudado a cientos de personas a convertirse en autores. Nuestro propósito es que {U:usted también pueda|tú también puedas} recorrer este camino con claridad y dirección, y disfrutar de cada etapa sin descuidar {sus} actividades diarias.\n{Lo} guiaremos paso a paso, desde {sus} primeras ideas hasta la publicación de {su} libro en Amazon KDP. No {U:necesita|necesitas} ser {G:escritor|escritora} ni dedicarle mucho tiempo.\nNuestro programa dura 12 semanas e incluye {hrs} horas de mentoría en grupos reducidos. El próximo grupo comienza el {ini} y los cupos son limitados, precisamente porque brindamos una atención personalizada.\nSi escribir {su} libro es un sueño que {U:desea|deseas} hacer realidad, {U:escríbame|escríbeme}. Con gusto podemos conversar para explicar{le} cómo ayudar{lo} a alcanzar esa meta.'],
+  ['«¿ME DA TODA LA INFORMACIÓN POR AQUÍ?»', 'Con mucho gusto, {sr}.\nPara muchas personas, escribir un libro es uno de los proyectos más importantes de su vida. Sin embargo, si no se sabe por dónde empezar ni qué ruta seguir, el proceso puede resultar complejo.\nEn Arquitectas de Autores Publicados contamos con una metodología que ya ha ayudado a cientos de personas a convertirse en autores. Nuestro propósito es que {U:usted también pueda|tú también puedas} recorrer este camino con claridad y dirección, y disfrutar de cada etapa sin descuidar {sus} actividades diarias.\n{Lo} guiaremos paso a paso, desde {sus} primeras ideas hasta la publicación de {su} libro en Amazon KDP. No {U:necesita|necesitas} ser {G:escritor|escritora} ni dedicarle mucho tiempo.\nNuestro programa dura {sem} semanas e incluye {hrs} horas de mentoría en grupos reducidos. El próximo grupo comienza el {ini} y los cupos son limitados, precisamente porque brindamos una atención personalizada.\nSi escribir {su} libro es un sueño que {U:desea|deseas} hacer realidad, {U:escríbame|escríbeme}. Con gusto podemos conversar para explicar{le} cómo ayudar{lo} a alcanzar esa meta.'],
   ['«AHORA NO PUEDO»', 'Por supuesto, {sr}.\n¿{U:Le|Te} viene mejor que {lo} llame más tarde o mañana por la mañana?'],
-  ['«¿CUÁNTO CUESTA?»', 'Para trabajar conmigo y con mi equipo durante los próximos tres meses, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo {tot}.\n{U:Puede|Puedes} pagarla en cuatro partes: {sep} para reservar {su} cupo y tres cuotas mensuales de {cuo}.\n¿Esta inversión es viable para {ti} en este momento?'],
+  ['«¿CUÁNTO CUESTA?»', 'Para trabajar conmigo y con mi equipo durante {mesp}, en los que {lo} ayudaremos a escribir y publicar {su} libro, la inversión es de solo {tot}.\n{U:Puede|Puedes} pagarla en cuatro partes: {sep} para reservar {su} cupo y tres cuotas mensuales de {cuo}.\n¿Esta inversión es viable para {ti} en este momento?'],
   ['«¿ESTO ES SERIO?»', 'Por supuesto, {sr}.\nNuestro programa se basa en una metodología que ya ha ayudado a cientos de personas a escribir sus libros.\nEs un proceso organizado, paso a paso, que comienza con {sus} ideas y experiencias, continúa con la estructura y el desarrollo de los capítulos y termina con la preparación y publicación de {su} libro en Amazon. Todo este camino no lo {U:recorre|recorres} {G:solo|sola}. Nosotras supervisamos {sus} avances, resolvemos {sus} dudas y {lo} orientamos durante todo el proceso.\nCon gusto puedo mostrar{le} cómo funciona.'],
   ['CONFIRMAR LA CITA', 'Perfecto, {sr}. Quedamos para el jueves a las 5 de la tarde. {Lo} llamaré a este mismo número para conocer el libro que {U:desea|deseas} escribir y explicar{le} cómo podemos ayudar{lo}.\n¡Hasta entonces!']
 ];
@@ -586,7 +592,12 @@ function buildAll() {
 
 
 /* ===== Pestaña 5 · Proforma ===== */
-S.pf = { fecha: '', modo: 'g', horas: 50, sep: 270, cuota: 370 };
+S.pf = { fecha: '', modo: 'g', horas: 50, sep: 270, cuota: 370, sem: 12 };
+/* Fecha objetivo de publicación: inicio + 93 días para 12 semanas; cada 4 semanas más o menos suma o resta 1 mes */
+const SEM_W = { 4: ['cuatro (4)', 'CUATRO'], 8: ['ocho (8)', 'OCHO'], 12: ['doce (12)', 'DOCE'], 16: ['dieciséis (16)', 'DIECISÉIS'], 20: ['veinte (20)', 'VEINTE'], 24: ['veinticuatro (24)', 'VEINTICUATRO'] };
+const MES_W = ['', 'un mes', 'dos meses', 'tres meses', 'cuatro meses', 'cinco meses', 'seis meses'];
+function addMonthsUTC(d, n) { const r = new Date(d.getTime()), day = r.getUTCDate(); r.setUTCDate(1); r.setUTCMonth(r.getUTCMonth() + n); const last = new Date(Date.UTC(r.getUTCFullYear(), r.getUTCMonth() + 1, 0)).getUTCDate(); r.setUTCDate(Math.min(day, last)); return r; }
+function pubOf(ini) { if (!ini) return null; return addMonthsUTC(new Date(ini.getTime() + 93 * 86400000), (S.pf.sem - 12) / 4); }
 S.ct = { nombre: '', dni: '', mail: '', bonos: false };
 /* Datos fijos de la empresa para el contrato (completar DNI, domicilio y partida) */
 const REP = { nombre: 'María Consuelo Alarcón Villaverde', dni: '06312992', dom: 'Cl. Pucala 120, Dpto. 402, San Miguel, Lima', partida: '' };
@@ -602,7 +613,7 @@ function pfHtml(c) {
   const H = t => esc(plain(t));
   const txt = t => esc(t.trim()).replace(/\n/g, '<br>');
   const ini = parseD(S.fecha), prop = parseD(S.pf.fecha);
-  const pub = ini ? new Date(ini.getTime() + 93 * 86400000) : null;
+  const pub = pubOf(ini);
   const fechaProp = prop ? fmtD(prop, true) : '[fecha]';
   const c1 = ini ? new Date(ini.getTime() - 86400000) : null;
   const c2 = c1 ? addM(c1, 1) : null, c3 = c1 ? addM(c1, 2) : null;
@@ -625,7 +636,7 @@ function pfHtml(c) {
   const blk = {
     steps: `
     <div class="pf-set">
-      <h4 class="pf-sh">${H('{U:SU|TU} RECORRIDO EN DOCE SEMANAS HACIA LA PUBLICACIÓN DE {U:SU|TU} LIBRO')}</h4>
+      <h4 class="pf-sh">${H('{U:SU|TU} RECORRIDO EN ' + SEM_W[S.pf.sem][1] + ' SEMANAS HACIA LA PUBLICACIÓN DE {U:SU|TU} LIBRO')}</h4>
       <div class="pf-steps">${steps}</div>
       <div class="pf-hero"><div class="pf-hn">${h}<small>${h === 1 ? 'hora' : 'horas'}</small></div><div><span>${G ? (c ? 'MENTORÍA GRUPAL' : 'MENTORÍA GRUPAL · GRUPOS REDUCIDOS') : 'MENTORÍA 1 A 1 · INDIVIDUAL'}</span><b>${hTxt} de mentoría${G ? '' : ' personalizada'}</b>${c && G ? '' : `<p>${H(G ? 'Acompañamiento en vivo, en grupos reducidos, durante todo el programa.' : 'Espacios exclusivos para {ti}, uno a uno, durante todo el programa.')}</p>`}</div></div>
     </div>
@@ -646,7 +657,8 @@ function pfHtml(c) {
     inv: `
     <h4 class="pf-h">${H('{U:SU|TU} INVERSIÓN')}</h4>
     <table class="pf-inv"><thead><tr><th>Total del programa</th><th class="amt">${money(total)}</th><th></th></tr></thead><tbody>${cuotas}</tbody></table>
-    ${hrs >= 0 && !c ? `<div class="pf-bonus"><span>BENEFICIO EXCLUSIVO POR RESERVA ANTICIPADA</span><p>${H(bonus)}</p></div>` : ''}
+    <p class="pf-igv">Los precios no incluyen IGV.</p>
+    ${hrs >= 0 && !c ? `<div class="pf-bonus"><span>BENEFICIO EXCLUSIVO POR RESERVA ANTICIPADA</span><p>${H(bonus)}</p>${bonusHrs}<p class="pf-b3t">${H('Además, {U:recibe|recibes} 3 bonos por reservar con anticipación:')}</p><ol class="pf-b3"><li><b>${H('Asesoría para el prólogo.')}</b> ${H('{U:Le orientamos|Te orientamos} sobre cómo solicitarlo a la persona de {su} elección y, si {U:lo desea|lo deseas}, también podemos elaborarlo.')}</li><li><b>${H('Revisión editorial adicional')}</b>${H(', asistida por inteligencia artificial, además de las revisiones del programa.')}</li><li><b>${H('Ruta del Autor Publicado.')}</b> ${H('Guía de acciones para después de publicar en Amazon, con estrategias de promoción y difusión en redes sociales.')}</li></ol></div>` : ''}
 `,
     pay: `
     <h4 class="pf-h">MEDIOS DE PAGO</h4>
@@ -705,7 +717,7 @@ function ctBuild(x) {
   const modo = G ? 'grupal, en grupos reducidos' : 'individual, uno a uno';
   const pasos = 'descubrir (experiencias, conocimientos, historias), estructurar la arquitectura del libro, desarrollar capítulos y subcapítulos, validar fuentes y citas, pulir (revisión editorial), maquetar el diseño interior, diseñar portada y contraportada, y publicar en Amazon KDP.';
 
-  const hd = cl('Objeto', P('LA EMPRESA brindará a ' + PA + ' acceso al programa <b>La Incubadora de Autores</b>, que incluye una metodología diseñada para ayudar' + g('lo', 'la') + ' a escribir su propio libro con asistencia de inteligencia artificial y publicarlo en Amazon KDP en un plazo de doce (12) semanas.') + P('Como parte del programa, ' + PA + ' recibirá ' + hTxt + ' de mentoría ' + (G ? 'grupal' : 'individual') + ', impartidas mediante sesiones virtuales en vivo.') + P('El recorrido del programa es el siguiente:') + blk.steps)
+  const hd = cl('Objeto', P('LA EMPRESA brindará a ' + PA + ' acceso al programa <b>La Incubadora de Autores</b>, que incluye una metodología diseñada para ayudar' + g('lo', 'la') + ' a escribir su propio libro con asistencia de inteligencia artificial y publicarlo en Amazon KDP en un plazo de ' + SEM_W[S.pf.sem][0] + ' semanas.') + P('Como parte del programa, ' + PA + ' recibirá ' + hTxt + ' de mentoría ' + (G ? 'grupal' : 'individual') + ', impartidas mediante sesiones virtuales en vivo.') + P('El recorrido del programa es el siguiente:') + blk.steps)
     + cl('Plazo', P('El programa se desarrollará conforme a las fechas de inicio y publicación previstas a continuación. La fecha objetivo de publicación del libro estará sujeta al avance de ' + PA + ' y al cumplimiento de las actividades programadas.') + blk.dates + P('En caso de fuerza mayor, LA EMPRESA podrá modificar las fechas establecidas, comunicando cualquier cambio con la mayor anticipación posible.'));
   const head = '<div class="ct-head"><h3 class="ct-t">Contrato de prestación de servicios · La Incubadora de Autores</h3>' +
     P('Conste por el presente documento el contrato de prestación de servicios que celebran, de una parte, <b>ARQUITECTAS DE AUTORES PUBLICADOS S.A.C.</b>, con RUC 20616663861, con domicilio en ' + bl(REP.dom, 150) + ', representada por <b>' + esc(REP.nombre) + '</b>, identificada con DNI N.º ' + bl(REP.dni, 80) + (REP.partida ? ', con poderes inscritos en la partida electrónica N.º ' + esc(REP.partida) + ' de la Zona Registral N.º IX – Sede Lima' : '') + ', a quien en adelante se le denominará <b>«LA EMPRESA»</b>; y, de la otra parte, ' + bl(nom, 190) + ', ' + g('identificado', 'identificada') + ' con DNI N.º ' + bl(S.ct.dni, 80) + ' y correo electrónico ' + bl(S.ct.mail, 150) + ', a quien en adelante se le denominará <b>«' + PA + '»</b>. Ambas partes acuerdan lo siguiente:') + '</div>' + hd;
@@ -745,6 +757,12 @@ function ctBuild(x) {
   };
 }
 
+/* El contrato solo se reparte en páginas cuando su pestaña es visible (oculta, no hay medidas) */
+function renderContrato() {
+  const cd = document.getElementById('ct-doc'); if (!cd) return;
+  cd.innerHTML = pfHtml(true);
+  if (cd.offsetParent !== null) paginate(cd);
+}
 /* Reparte las cláusulas del contrato en páginas A4 según su altura real */
 function paginate(doc) {
   const flow = doc.querySelector('.ct-flow'); if (!flow) return;
@@ -771,14 +789,17 @@ function paginate(doc) {
   let body = mk();
   units.forEach(u => {
     u.forEach(e => body.appendChild(e));
-    if (body.scrollHeight > body.clientHeight + 1 && body.children.length > u.length) { u.forEach(e => body.removeChild(e)); body = mk(); u.forEach(e => body.appendChild(e)); }
+    const br = body.getBoundingClientRect(), limit = br.bottom - parseFloat(getComputedStyle(body).paddingBottom), lastB = u[u.length - 1].getBoundingClientRect().bottom;
+    if ((lastB > limit + 1 || body.scrollHeight > body.clientHeight + 1) && body.children.length > u.length) { u.forEach(e => body.removeChild(e)); body = mk(); u.forEach(e => body.appendChild(e)); }
   });
   body.appendChild(legal);
 }
 /* ===== Interfaz ===== */
 function refresh() {
+  const hp = document.getElementById('hint-pub');
+  if (hp) { const i0 = parseD(S.fecha), p0 = pubOf(i0); const dif = (S.pf.sem - 12) / 4; hp.textContent = i0 && p0 ? 'La fecha de publicación objetivo se calcula sola: 93 días' + (dif ? (dif > 0 ? ' más ' : ' menos ') + MES_W[Math.abs(dif)] : '') + ' después del inicio, para un programa de ' + S.pf.sem + ' semanas (del ' + fmtD(i0, true) + ' al ' + fmtD(p0, true) + ').' : ''; }
   const pd = document.getElementById('pf-doc'); if (pd) pd.innerHTML = pfHtml();
-  const cd = document.getElementById('ct-doc'); if (cd) { cd.innerHTML = pfHtml(true); paginate(cd); }
+  renderContrato();
   document.querySelectorAll('[data-i]').forEach(el => { el.innerHTML = html(TPL[+el.dataset.i]); });
 }
 function toast(btn, ok) {
@@ -848,6 +869,7 @@ function go(tab, anchor) {
     const pnl = document.querySelector('[data-panel="' + tab + '"]'), bar = document.querySelector('.pf-tools:not(.ct-tools)');
     if (pnl && bar && bar.parentNode !== pnl) pnl.prepend(bar);
   }
+  if (tab === 'contrato') renderContrato();
   const el = anchor && document.getElementById(anchor);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   else window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -868,10 +890,12 @@ function init() {
   const pfTitle = () => document.querySelector('.tab.on').dataset.tab === 'contrato'
     ? plain((S.ct.nombre.trim() || S.nombre.trim() ? (S.ct.nombre.trim() || '{n}') + ', ' : '') + 'Contrato · La Incubadora de Autores').replace(/[\\/:*?"<>|]/g, '')
     : plain((S.nombre.trim() ? '{n}, ' : '') + '¡{U:Su|Tu} primer libro está muy cerca!').replace(/[\\/:*?"<>|]/g, '');
-  window.addEventListener('beforeprint', () => { document.title = pfTitle(); });
+  window.addEventListener('beforeprint', () => { document.title = pfTitle(); if (document.querySelector('.tab.on').dataset.tab === 'contrato') renderContrato(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (document.querySelector('.tab.on').dataset.tab === 'contrato') renderContrato(); });
   window.addEventListener('afterprint', () => { document.title = baseTitle; });
   [['pf-sep', 'sep'], ['pf-cuota', 'cuota']].forEach(p => { const el = document.getElementById(p[0]); el.addEventListener('input', () => { const v = parseFloat(el.value); S.pf[p[1]] = isNaN(v) || v < 0 ? 0 : v; refresh(); }); });
   const sh = document.getElementById('pf-horas'), sm = document.getElementById('pf-modo');
+  const ss = document.getElementById('pf-sem'); ss.addEventListener('change', () => { S.pf.sem = parseInt(ss.value, 10); refresh(); });
   sh.addEventListener('change', () => { S.pf.horas = parseInt(sh.value, 10); refresh(); });
   sm.addEventListener('change', () => { S.pf.modo = sm.value; S.pf.horas = sm.value === 'i' ? 12 : 50; sh.value = String(S.pf.horas); refresh(); });
   document.getElementById('pf-print').addEventListener('click', () => window.print());
