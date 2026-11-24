@@ -176,6 +176,10 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
 .pf-det em{font-style:normal;font-size:11px;color:var(--gold-d);font-weight:700;display:block}
 .pf-det b{font-size:12px;color:var(--navy)}
 .pf-det p{margin:3px 0 0;font-size:12px}
+.pf-inv tr.pf-unico td{padding:12px;font-size:13px;font-weight:600}
+.pf-pu{display:flex;align-items:center;gap:10px;margin-top:8px;padding:9px 12px;border:1px solid var(--gold);background:var(--cream);border-radius:8px;font-size:12px;color:var(--navy)}
+.pf-pu b{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-d)}
+.pf-tools input:disabled{background:var(--mist);color:#8a99a3}
 .pf-inv{width:100%;border-collapse:collapse;font-size:12px}
 .pf-inv th{background:var(--navy);color:#fff;text-align:left;padding:9px 12px;font-size:13.5px}
 .pf-inv th.amt{color:var(--gold)}
@@ -320,6 +324,8 @@ ol.gq li::before{content:counter(q);position:absolute;left:9px;top:7px;width:23p
         <div class="fld"><label for="pf-sep">Separación (S/)</label><input type="number" id="pf-sep" min="0" step="10" value="270"></div>
         <div class="fld"><label for="pf-cuota">Cuota ×3 (S/)</label><input type="number" id="pf-cuota" min="0" step="10" value="370"></div>
         
+        <div class="fld"><label for="pf-pago">Forma de pago</label><select id="pf-pago"><option value="c" selected>En cuotas</option><option value="u">Pago total</option></select></div>
+        <div class="fld"><label for="pf-unico">Importe pago total (S/)</label><input type="number" id="pf-unico" min="0" step="10" value="1380" disabled></div>
         <div class="fld pf-act"><button class="pf-btn" id="pf-print" type="button" title="Imprime solo la propuesta, en 2 páginas A4. Elige «Guardar como PDF».">Guardar PDF</button></div>
       </div>
       <div id="pf-doc"></div>
@@ -592,7 +598,7 @@ function buildAll() {
 
 
 /* ===== Pestaña 5 · Proforma ===== */
-S.pf = { fecha: '', modo: 'g', horas: 50, sep: 270, cuota: 370, sem: 12 };
+S.pf = { fecha: '', modo: 'g', horas: 50, sep: 270, cuota: 370, sem: 12, pago: 'c', unico: 1380 };
 /* Fecha objetivo de publicación: inicio + 93 días para 12 semanas; cada 4 semanas más o menos suma o resta 1 mes */
 const SEM_W = { 4: ['cuatro (4)', 'CUATRO'], 8: ['ocho (8)', 'OCHO'], 12: ['doce (12)', 'DOCE'], 16: ['dieciséis (16)', 'DIECISÉIS'], 20: ['veinte (20)', 'VEINTE'], 24: ['veinticuatro (24)', 'VEINTICUATRO'] };
 const MES_W = ['', 'un mes', 'dos meses', 'tres meses', 'cuatro meses', 'cinco meses', 'seis meses'];
@@ -627,9 +633,11 @@ function pfHtml(c) {
     .map((x, i) => `<div class="pf-step"><span>${i + 1}</span><b>${x[0]}</b><i>${x[1]}</i></div>`).join('');
 
   const money = v => 'S/ ' + Math.round(v).toLocaleString('en-US');
-  const total = S.pf.sep + 3 * S.pf.cuota;
+  const unico = S.pf.pago === 'u';
+  const total = unico ? S.pf.unico : S.pf.sep + 3 * S.pf.cuota;
   const cuotas = [['Reserva de inscripción', money(S.pf.sep), H('Al confirmar {su} reserva')], ['Primera cuota', money(S.pf.cuota), D(c1)], ['Segunda cuota', money(S.pf.cuota), D(c2)], ['Tercera cuota', money(S.pf.cuota), D(c3)]]
     .map(r => `<tr><td>${r[0]}</td><td class="amt">${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+  const filas = unico ? `<tr class="pf-unico"><td>Pago total</td><td class="amt">${money(total)}</td><td>${H('Al confirmar {su} reserva')}</td></tr>` : cuotas;
   const bonus = `Desde {su} reserva y hasta antes del inicio del programa, {U:cuenta|cuentas} con 1 hora semanal de mentoría individual, uno a uno. Son espacios adicionales a las ${hTxt} ${G ? 'grupales' : 'de mentoría personalizada'}.`;
   const bonusHrs = hrs >= 1 ? `<p class="pf-bh">${H('Con la fecha de esta propuesta, {U:puede acceder|puedes acceder} a hasta ' + hrs + (hrs === 1 ? ' hora' : ' horas') + ' de mentoría individual antes del inicio.')}</p>` : '';
 
@@ -656,8 +664,9 @@ function pfHtml(c) {
 `,
     inv: `
     <h4 class="pf-h">${H('{U:SU|TU} INVERSIÓN')}</h4>
-    <table class="pf-inv"><thead><tr><th>Total del programa</th><th class="amt">${money(total)}</th><th></th></tr></thead><tbody>${cuotas}</tbody></table>
+    <table class="pf-inv"><thead><tr><th>Total del programa</th><th class="amt">${money(total)}</th><th></th></tr></thead><tbody>${filas}</tbody></table>
     <p class="pf-igv">Los precios no incluyen IGV.</p>
+    ${unico ? `<div class="pf-pu"><b>Pago único</b><span>${H('{U:Cancela|Cancelas} el programa completo en un solo pago, sin cuotas.')}</span></div>` : ''}
     ${hrs >= 0 && !c ? `<div class="pf-bonus"><span>BENEFICIO EXCLUSIVO POR RESERVA ANTICIPADA</span><p>${H(bonus)}</p>${bonusHrs}<p class="pf-b3t">${H('Además, {U:recibe|recibes} 3 bonos por reservar con anticipación:')}</p><ol class="pf-b3"><li><b>${H('Asesoría para el prólogo.')}</b> ${H('{U:Le orientamos|Te orientamos} sobre cómo solicitarlo a la persona de {su} elección y, si {U:lo desea|lo deseas}, también podemos elaborarlo.')}</li><li><b>${H('Revisión editorial adicional')}</b>${H(', asistida por inteligencia artificial, además de las revisiones del programa.')}</li><li><b>${H('Ruta del Autor Publicado.')}</b> ${H('Guía de acciones para después de publicar en Amazon, con estrategias de promoción y difusión en redes sociales.')}</li></ol></div>` : ''}
 `,
     pay: `
@@ -893,6 +902,11 @@ function init() {
   window.addEventListener('beforeprint', () => { document.title = pfTitle(); if (document.querySelector('.tab.on').dataset.tab === 'contrato') renderContrato(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (document.querySelector('.tab.on').dataset.tab === 'contrato') renderContrato(); });
   window.addEventListener('afterprint', () => { document.title = baseTitle; });
+  const pgSel = document.getElementById('pf-pago'), unEl = document.getElementById('pf-unico');
+  const syncPago = () => { const u = S.pf.pago === 'u'; unEl.disabled = !u; ['pf-sep', 'pf-cuota'].forEach(i => document.getElementById(i).disabled = u); };
+  pgSel.addEventListener('change', () => { S.pf.pago = pgSel.value; syncPago(); refresh(); });
+  unEl.addEventListener('input', () => { const v = parseFloat(unEl.value); S.pf.unico = isNaN(v) || v < 0 ? 0 : v; refresh(); });
+  syncPago();
   [['pf-sep', 'sep'], ['pf-cuota', 'cuota']].forEach(p => { const el = document.getElementById(p[0]); el.addEventListener('input', () => { const v = parseFloat(el.value); S.pf[p[1]] = isNaN(v) || v < 0 ? 0 : v; refresh(); }); });
   const sh = document.getElementById('pf-horas'), sm = document.getElementById('pf-modo');
   const ss = document.getElementById('pf-sem'); ss.addEventListener('change', () => { S.pf.sem = parseInt(ss.value, 10); refresh(); });
